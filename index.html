@@ -1,0 +1,2903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REPLICA | Urban Editorial Shop</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+    
+    <!-- React & Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --color-black: #0a0a0a;
+            --color-white: #ffffff;
+            --color-gray-100: #f7f7f7;
+            --color-gray-200: #eeeeee;
+            --color-gray-300: #dddddd;
+            --color-gray-400: #999999;
+            --color-gray-600: #666666;
+            --color-accent: #c9a227;
+            --color-danger: #d32f2f;
+            --color-success: #2e7d32;
+            --color-warning: #f57c00;
+            --color-info: #1976d2;
+            
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Noto Sans KR', -apple-system, sans-serif;
+            
+            --header-height: 120px;
+            --admin-sidebar: 260px;
+        }
+        
+        body { 
+            font-family: var(--font-body);
+            color: var(--color-black);
+            background: var(--color-white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        input, select, textarea { font-family: inherit; }
+        
+        /* Loading Spinner */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--color-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-logo {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-gray-200);
+            border-top-color: var(--color-black);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 15px 25px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.error { background: var(--color-danger); }
+        .toast.success { background: var(--color-success); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .top-banner {
+            background: var(--color-black);
+            color: var(--color-white);
+            text-align: center;
+            padding: 10px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+        
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: -1px;
+            cursor: pointer;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 50px;
+        }
+        
+        .nav-link {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-black);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        
+        .header-btn {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--color-gray-600);
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .header-btn:hover {
+            color: var(--color-black);
+        }
+        
+        .cart-btn {
+            position: relative;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background: var(--color-black);
+            color: var(--color-white);
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ===== HERO ===== */
+        .hero {
+            height: 85vh;
+            min-height: 600px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--color-white);
+            background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 1s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero-subtitle {
+            font-size: 12px;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 72px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        
+        .hero-desc {
+            font-size: 16px;
+            opacity: 0.85;
+            margin-bottom: 50px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            padding: 18px 50px;
+            border: 2px solid var(--color-white);
+            color: var(--color-white);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+        
+        .btn-primary:hover {
+            background: var(--color-white);
+            color: var(--color-black);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* ===== SECTION COMMON ===== */
+        .section {
+            padding: 100px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--color-black);
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .view-all {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--color-black);
+            padding-bottom: 2px;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        
+        .view-all:hover {
+            opacity: 0.6;
+        }
+        
+        /* ===== PRODUCT GRID ===== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px 25px;
+        }
+        
+        .product-card {
+            cursor: pointer;
+        }
+        
+        .product-image {
+            position: relative;
+            aspect-ratio: 3/4;
+            background: var(--color-gray-100);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 5px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .product-wishlist {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: var(--color-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .product-card:hover .product-wishlist {
+            opacity: 1;
+        }
+        
+        .product-brand {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        
+        .product-name {
+            font-size: 14px;
+            color: var(--color-gray-600);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .product-price {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .product-price .original {
+            color: var(--color-gray-400);
+            text-decoration: line-through;
+            margin-right: 10px;
+            font-weight: 400;
+        }
+        
+        .product-price .sale {
+            color: var(--color-danger);
+        }
+        
+        /* ===== CATEGORY BANNER ===== */
+        .category-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 60px;
+            max-width: 1600px;
+            margin: 0 auto 100px;
+        }
+        
+        .category-card {
+            position: relative;
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+            transition: background 0.3s;
+        }
+        
+        .category-card:hover::before {
+            background: rgba(0,0,0,0.4);
+        }
+        
+        .category-content {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            z-index: 2;
+            color: var(--color-white);
+        }
+        
+        .category-name {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .category-count {
+            font-size: 12px;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 80px 60px 40px;
+        }
+        
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .footer-desc {
+            font-size: 14px;
+            color: var(--color-gray-400);
+            line-height: 1.8;
+        }
+        
+        .footer-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            font-size: 14px;
+            color: var(--color-gray-400);
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .footer-links a:hover {
+            color: var(--color-white);
+        }
+        
+        .footer-bottom {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--color-gray-400);
+        }
+        
+        /* ===== AUTH PAGES ===== */
+        .auth-page {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            background: var(--color-gray-100);
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--color-white);
+            padding: 60px 50px;
+        }
+        
+        .auth-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .auth-subtitle {
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--color-gray-200);
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-black);
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: var(--color-black);
+            color: var(--color-white);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transition: opacity 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-submit:hover {
+            opacity: 0.85;
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .auth-link {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: var(--color-gray-600);
+        }
+        
+        .auth-link a {
+            color: var(--color-black);
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-black);
+            cursor: pointer;
+        }
+        
+        .auth-error {
+            background: #ffebee;
+            color: var(--color-danger);
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            background: var(--color-gray-100);
+            padding: 60px;
+            text-align: center;
+        }
+        
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 42px;
+            font-weight: 700;
+        }
+        
+        .breadcrumb {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--color-gray-600);
+        }
+        
+        .breadcrumb a {
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--color-black);
+        }
+        
+        .products-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .products-count {
+            font-size: 14px;
+            color: var(--color-gray-600);
+        }
+        
+        .products-sort select {
+            padding: 10px 15px;
+            border: 1px solid var(--color-gray-200);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        /* ===== CART PAGE ===== */
+        .cart-page {
+            padding: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .cart-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .cart-items {
+            margin-bottom: 40px;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 120px 1fr auto auto;
+            gap: 30px;
+            align-items: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .cart-item-image {
+            aspect-ratio: 3/4;
+            background: var(--color-gray-100);
+            overflow: hidden;
+        }
+        
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cart-item-info h3 {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-info p {
+            font-size: 14px;
+            color: var(--color-gray-600);
+        }
+        
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--color-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            background: white;
+        }
+        
+        .cart-summary {
+            background: var(--color-gray-100);
+            padding: 40px;
+        }
+        
+        .cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .cart-summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-gray-200);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .btn-checkout {
+            width: 100%;
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--color-black);
+            color: var(--color-white);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* ===== ADMIN STYLES ===== */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: var(--admin-sidebar);
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 30px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+        
+        .admin-logo {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-style: italic;
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .admin-logo span {
+            display: block;
+            font-size: 10px;
+            font-style: normal;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-top: 5px;
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .admin-nav-item {
+            padding: 15px 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .admin-nav-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .admin-nav-item.active {
+            background: rgba(255,255,255,0.1);
+            border-left: 3px solid var(--color-white);
+        }
+        
+        .admin-nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px 30px;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: var(--admin-sidebar);
+            background: var(--color-gray-100);
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: var(--color-white);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .admin-content {
+            padding: 40px;
+        }
+        
+        /* Admin Stats */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--color-white);
+            padding: 30px;
+            border-radius: 4px;
+        }
+        
+        .stat-card h3 {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--color-gray-600);
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+        
+        /* Admin Table */
+        .admin-table-container {
+            background: var(--color-white);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .admin-table-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--color-gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-table-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th {
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-gray-600);
+            background: var(--color-gray-100);
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .admin-table td {
+            padding: 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--color-gray-200);
+            vertical-align: middle;
+        }
+        
+        .admin-table tr:hover {
+            background: var(--color-gray-100);
+        }
+        
+        .admin-table img {
+            width: 50px;
+            height: 65px;
+            object-fit: cover;
+            background: var(--color-gray-100);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-pending { background: #fff3e0; color: var(--color-warning); }
+        .status-confirmed { background: #e3f2fd; color: var(--color-info); }
+        .status-shipped { background: #e8f5e9; color: var(--color-success); }
+        .status-completed { background: var(--color-gray-200); color: var(--color-gray-600); }
+        
+        /* Admin Buttons */
+        .btn-admin {
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-admin-primary {
+            background: var(--color-black);
+            color: var(--color-white);
+            border: none;
+        }
+        
+        .btn-admin-secondary {
+            background: var(--color-white);
+            color: var(--color-black);
+            border: 1px solid var(--color-gray-300);
+        }
+        
+        .btn-admin-danger {
+            background: var(--color-danger);
+            color: var(--color-white);
+            border: none;
+        }
+        
+        .btn-admin-sm {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        
+        /* Admin Form */
+        .admin-form-group {
+            margin-bottom: 25px;
+        }
+        
+        .admin-form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .admin-form-group input,
+        .admin-form-group select,
+        .admin-form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--color-gray-200);
+            font-size: 14px;
+        }
+        
+        .admin-form-group input:focus,
+        .admin-form-group select:focus,
+        .admin-form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-black);
+        }
+        
+        .admin-form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        
+        .admin-form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--color-gray-200);
+        }
+        
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed var(--color-gray-300);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--color-gray-100);
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--color-black);
+            background: var(--color-white);
+        }
+        
+        .image-upload-area.dragging {
+            border-color: var(--color-black);
+            background: var(--color-white);
+        }
+        
+        .image-upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .image-upload-text {
+            font-size: 14px;
+            color: var(--color-gray-600);
+            margin-bottom: 10px;
+        }
+        
+        .image-upload-hint {
+            font-size: 12px;
+            color: var(--color-gray-400);
+        }
+        
+        .image-preview-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 260px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .image-preview-remove {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 28px;
+            height: 28px;
+            background: var(--color-danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-progress {
+            margin-top: 15px;
+        }
+        
+        .upload-progress-bar {
+            height: 4px;
+            background: var(--color-gray-200);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .upload-progress-fill {
+            height: 100%;
+            background: var(--color-black);
+            transition: width 0.3s;
+        }
+        
+        .upload-progress-text {
+            font-size: 12px;
+            color: var(--color-gray-600);
+            margin-top: 8px;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .modal {
+            background: var(--color-white);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--color-gray-600);
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--color-black);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .product-grid { grid-template-columns: repeat(3, 1fr); }
+            .category-section { grid-template-columns: repeat(2, 1fr); }
+            .admin-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 768px) {
+            .header-main { padding: 15px 20px; }
+            .nav-menu { display: none; }
+            .hero-title { font-size: 42px; }
+            .section { padding: 60px 20px; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 15px; }
+            .category-section { grid-template-columns: 1fr; padding: 0 20px; }
+            .footer-content { grid-template-columns: 1fr; gap: 40px; }
+            .admin-sidebar { display: none; }
+            .admin-main { margin-left: 0; }
+            .cart-item { grid-template-columns: 80px 1fr; gap: 15px; }
+            .cart-item-qty, .cart-item > div:last-child { grid-column: 2; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiraK4MFYnXerJaiRAlTF7GtNoSWggyMM",
+            authDomain: "replica-89a4d.firebaseapp.com",
+            projectId: "replica-89a4d",
+            storageBucket: "replica-89a4d.firebasestorage.app",
+            messagingSenderId: "707110930733",
+            appId: "1:707110930733:web:0663a763118b4522e22ba4"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
+        // Admin Email
+        const ADMIN_EMAIL = 'admin@replica.com';
+    </script>
+    
+    <script type="text/babel">
+        const { useState, useEffect, createContext, useContext, useRef } = React;
+        
+        // ===== CONTEXT =====
+        const AppContext = createContext();
+        
+        const AppProvider = ({ children }) => {
+            const [user, setUser] = useState(null);
+            const [isAdmin, setIsAdmin] = useState(false);
+            const [loading, setLoading] = useState(true);
+            const [cart, setCart] = useState([]);
+            const [currentPage, setCurrentPage] = useState('home');
+            const [selectedProduct, setSelectedProduct] = useState(null);
+            const [products, setProducts] = useState([]);
+            const [orders, setOrders] = useState([]);
+            const [members, setMembers] = useState([]);
+            const [toast, setToast] = useState(null);
+            
+            const showToast = (message, type = 'info') => {
+                setToast({ message, type });
+                setTimeout(() => setToast(null), 3000);
+            };
+            
+            // Auth State Observer
+            useEffect(() => {
+                const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+                    if (firebaseUser) {
+                        const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+                        const userData = userDoc.data();
+                        
+                        setUser({
+                            uid: firebaseUser.uid,
+                            email: firebaseUser.email,
+                            name: userData?.name || firebaseUser.email.split('@')[0],
+                            phone: userData?.phone || ''
+                        });
+                        
+                        setIsAdmin(firebaseUser.email === ADMIN_EMAIL);
+                        
+                        const savedCart = localStorage.getItem(`cart_${firebaseUser.uid}`);
+                        if (savedCart) setCart(JSON.parse(savedCart));
+                    } else {
+                        setUser(null);
+                        setIsAdmin(false);
+                        setCart([]);
+                    }
+                    setLoading(false);
+                });
+                
+                return () => unsubscribe();
+            }, []);
+            
+            // Load Products
+            useEffect(() => {
+                const unsubscribe = db.collection('products')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((snapshot) => {
+                        const productsData = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        setProducts(productsData);
+                    });
+                
+                return () => unsubscribe();
+            }, []);
+            
+            // Load Orders (Admin only)
+            useEffect(() => {
+                if (!isAdmin) return;
+                
+                const unsubscribe = db.collection('orders')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((snapshot) => {
+                        const ordersData = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        setOrders(ordersData);
+                    });
+                
+                return () => unsubscribe();
+            }, [isAdmin]);
+            
+            // Load Members (Admin only)
+            useEffect(() => {
+                if (!isAdmin) return;
+                
+                const unsubscribe = db.collection('users')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((snapshot) => {
+                        const membersData = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        setMembers(membersData);
+                    });
+                
+                return () => unsubscribe();
+            }, [isAdmin]);
+            
+            // Save Cart
+            useEffect(() => {
+                if (user) {
+                    localStorage.setItem(`cart_${user.uid}`, JSON.stringify(cart));
+                }
+            }, [cart, user]);
+            
+            // Auth Functions
+            const register = async (email, password, name, phone) => {
+                try {
+                    const { user: firebaseUser } = await auth.createUserWithEmailAndPassword(email, password);
+                    
+                    await db.collection('users').doc(firebaseUser.uid).set({
+                        email,
+                        name,
+                        phone,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        orderCount: 0,
+                        totalSpent: 0
+                    });
+                    
+                    showToast('회원가입이 완료되었습니다!', 'success');
+                    return true;
+                } catch (error) {
+                    throw error;
+                }
+            };
+            
+            const login = async (email, password) => {
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    showToast('로그인되었습니다!', 'success');
+                    return true;
+                } catch (error) {
+                    throw error;
+                }
+            };
+            
+            const logout = async () => {
+                await auth.signOut();
+                setCurrentPage('home');
+                showToast('로그아웃되었습니다.');
+            };
+            
+            // Cart Functions
+            const addToCart = (product) => {
+                setCart(prev => {
+                    const exists = prev.find(item => item.id === product.id);
+                    if (exists) {
+                        return prev.map(item => 
+                            item.id === product.id 
+                                ? {...item, qty: item.qty + 1}
+                                : item
+                        );
+                    }
+                    return [...prev, {...product, qty: 1}];
+                });
+                showToast('장바구니에 추가되었습니다!', 'success');
+            };
+            
+            const removeFromCart = (productId) => {
+                setCart(prev => prev.filter(item => item.id !== productId));
+            };
+            
+            const updateQty = (productId, qty) => {
+                if (qty < 1) return removeFromCart(productId);
+                setCart(prev => prev.map(item =>
+                    item.id === productId ? {...item, qty} : item
+                ));
+            };
+            
+            const clearCart = () => setCart([]);
+            
+            // Navigation
+            const navigate = (page, product = null) => {
+                setCurrentPage(page);
+                if (product) setSelectedProduct(product);
+                window.scrollTo(0, 0);
+            };
+            
+            // Image Upload Function
+            const uploadImage = async (file, onProgress) => {
+                const fileName = `${Date.now()}_${file.name}`;
+                const storageRef = storage.ref(`products/${fileName}`);
+                const uploadTask = storageRef.put(file);
+                
+                return new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            if (onProgress) onProgress(progress);
+                        },
+                        (error) => reject(error),
+                        async () => {
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            resolve(downloadURL);
+                        }
+                    );
+                });
+            };
+            
+            // Product Functions
+            const addProduct = async (productData) => {
+                try {
+                    await db.collection('products').add({
+                        ...productData,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showToast('상품이 등록되었습니다!', 'success');
+                } catch (error) {
+                    showToast('상품 등록 실패', 'error');
+                }
+            };
+            
+            const updateProduct = async (productId, updates) => {
+                try {
+                    await db.collection('products').doc(productId).update(updates);
+                    showToast('상품이 수정되었습니다!', 'success');
+                } catch (error) {
+                    showToast('상품 수정 실패', 'error');
+                }
+            };
+            
+            const deleteProduct = async (productId) => {
+                try {
+                    await db.collection('products').doc(productId).delete();
+                    showToast('상품이 삭제되었습니다!', 'success');
+                } catch (error) {
+                    showToast('상품 삭제 실패', 'error');
+                }
+            };
+            
+            // Order Functions
+            const createOrder = async (orderData) => {
+                try {
+                    await db.collection('orders').add({
+                        ...orderData,
+                        userId: user.uid,
+                        userName: user.name,
+                        userEmail: user.email,
+                        status: 'pending',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    await db.collection('users').doc(user.uid).update({
+                        orderCount: firebase.firestore.FieldValue.increment(1),
+                        totalSpent: firebase.firestore.FieldValue.increment(orderData.total)
+                    });
+                    
+                    clearCart();
+                    showToast('주문이 완료되었습니다!', 'success');
+                } catch (error) {
+                    showToast('주문 실패', 'error');
+                    throw error;
+                }
+            };
+            
+            const updateOrderStatus = async (orderId, status) => {
+                try {
+                    await db.collection('orders').doc(orderId).update({ status });
+                    showToast('주문 상태가 변경되었습니다!', 'success');
+                } catch (error) {
+                    showToast('상태 변경 실패', 'error');
+                }
+            };
+            
+            const getUserOrders = async () => {
+                if (!user) return [];
+                const snapshot = await db.collection('orders')
+                    .where('userId', '==', user.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            };
+            
+            return (
+                <AppContext.Provider value={{
+                    user, isAdmin, loading,
+                    register, login, logout,
+                    cart, addToCart, removeFromCart, updateQty, clearCart,
+                    currentPage, navigate, selectedProduct,
+                    products, addProduct, updateProduct, deleteProduct,
+                    orders, createOrder, updateOrderStatus, getUserOrders,
+                    members,
+                    uploadImage,
+                    showToast, toast
+                }}>
+                    {children}
+                </AppContext.Provider>
+            );
+        };
+        
+        const useApp = () => useContext(AppContext);
+        
+        // ===== COMPONENTS =====
+        const Toast = () => {
+            const { toast } = useApp();
+            if (!toast) return null;
+            return <div className={`toast ${toast.type}`}>{toast.message}</div>;
+        };
+        
+        const LoadingScreen = () => (
+            <div className="loading-screen">
+                <div className="loading-logo">REPLICA</div>
+                <div className="loading-spinner"></div>
+            </div>
+        );
+        
+        // Image Upload Component
+        const ImageUpload = ({ value, onChange, onUploading }) => {
+            const { uploadImage, showToast } = useApp();
+            const [preview, setPreview] = useState(value || '');
+            const [uploading, setUploading] = useState(false);
+            const [progress, setProgress] = useState(0);
+            const [dragging, setDragging] = useState(false);
+            const fileInputRef = useRef(null);
+            
+            useEffect(() => {
+                setPreview(value || '');
+            }, [value]);
+            
+            const handleFile = async (file) => {
+                if (!file) return;
+                
+                if (!file.type.startsWith('image/')) {
+                    showToast('이미지 파일만 업로드 가능합니다.', 'error');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('파일 크기는 5MB 이하여야 합니다.', 'error');
+                    return;
+                }
+                
+                // Show preview immediately
+                const reader = new FileReader();
+                reader.onload = (e) => setPreview(e.target.result);
+                reader.readAsDataURL(file);
+                
+                // Upload to Firebase
+                setUploading(true);
+                if (onUploading) onUploading(true);
+                setProgress(0);
+                
+                try {
+                    const url = await uploadImage(file, (p) => setProgress(p));
+                    onChange(url);
+                    showToast('이미지가 업로드되었습니다!', 'success');
+                } catch (error) {
+                    showToast('이미지 업로드 실패', 'error');
+                    setPreview('');
+                }
+                
+                setUploading(false);
+                if (onUploading) onUploading(false);
+            };
+            
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setDragging(false);
+                const file = e.dataTransfer.files[0];
+                handleFile(file);
+            };
+            
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                setDragging(true);
+            };
+            
+            const handleDragLeave = () => {
+                setDragging(false);
+            };
+            
+            const handleRemove = () => {
+                setPreview('');
+                onChange('');
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+            };
+            
+            return (
+                <div className="admin-form-group">
+                    <label>PRODUCT IMAGE *</label>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={(e) => handleFile(e.target.files[0])}
+                    />
+                    
+                    {preview ? (
+                        <div className="image-preview-container">
+                            <img src={preview} alt="Preview" className="image-preview" />
+                            {!uploading && (
+                                <button 
+                                    type="button" 
+                                    className="image-preview-remove"
+                                    onClick={handleRemove}
+                                >
+                                    ×
+                                </button>
+                            )}
+                            {uploading && (
+                                <div className="upload-progress">
+                                    <div className="upload-progress-bar">
+                                        <div 
+                                            className="upload-progress-fill" 
+                                            style={{ width: `${progress}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="upload-progress-text">
+                                        업로드 중... {Math.round(progress)}%
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div
+                            className={`image-upload-area ${dragging ? 'dragging' : ''}`}
+                            onClick={() => fileInputRef.current?.click()}
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                        >
+                            <div className="image-upload-icon">📷</div>
+                            <div className="image-upload-text">
+                                클릭하거나 이미지를 드래그하세요
+                            </div>
+                            <div className="image-upload-hint">
+                                JPG, PNG, GIF (최대 5MB)
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        const Header = () => {
+            const { user, logout, cart, navigate, currentPage, isAdmin } = useApp();
+            
+            return (
+                <header className="header">
+                    <div className="top-banner">
+                        WORLDWIDE SHIPPING AVAILABLE | FREE RETURNS
+                    </div>
+                    <div className="header-main">
+                        <div className="logo" onClick={() => navigate('home')}>
+                            REPLICA
+                        </div>
+                        <nav className="nav-menu">
+                            <span className={`nav-link ${currentPage === 'products' ? 'active' : ''}`} 
+                               onClick={() => navigate('products')}>New Arrivals</span>
+                            <span className="nav-link" onClick={() => navigate('products')}>Designers</span>
+                            <span className="nav-link" onClick={() => navigate('products')}>Clothing</span>
+                            <span className="nav-link" onClick={() => navigate('products')}>Shoes & Bags</span>
+                            <span className="nav-link" onClick={() => navigate('products')}>Editorial</span>
+                        </nav>
+                        <div className="header-actions">
+                            <button className="header-btn">SEARCH</button>
+                            {user ? (
+                                <>
+                                    <button className="header-btn" onClick={() => navigate('mypage')}>
+                                        {user.name}님
+                                    </button>
+                                    {isAdmin && (
+                                        <button className="header-btn" onClick={() => navigate('admin')}>
+                                            ADMIN
+                                        </button>
+                                    )}
+                                    <button className="header-btn" onClick={logout}>LOGOUT</button>
+                                </>
+                            ) : (
+                                <button className="header-btn" onClick={() => navigate('login')}>LOGIN</button>
+                            )}
+                            <button className="header-btn cart-btn" onClick={() => navigate('cart')}>
+                                CART
+                                {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
+                            </button>
+                        </div>
+                    </div>
+                </header>
+            );
+        };
+        
+        const Footer = () => {
+            const { navigate } = useApp();
+            
+            return (
+                <footer className="footer">
+                    <div className="footer-content">
+                        <div>
+                            <div className="footer-brand">REPLICA</div>
+                            <p className="footer-desc">
+                                Curating the finest selection of contemporary fashion.<br/>
+                                Discover timeless pieces from world-renowned designers.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 className="footer-title">SHOP</h4>
+                            <ul className="footer-links">
+                                <li><a onClick={() => navigate('products')}>New Arrivals</a></li>
+                                <li><a onClick={() => navigate('products')}>Designers</a></li>
+                                <li><a onClick={() => navigate('products')}>Clothing</a></li>
+                                <li><a onClick={() => navigate('products')}>Shoes</a></li>
+                                <li><a onClick={() => navigate('products')}>Bags</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="footer-title">HELP</h4>
+                            <ul className="footer-links">
+                                <li><a>Contact Us</a></li>
+                                <li><a>Shipping Info</a></li>
+                                <li><a>Returns</a></li>
+                                <li><a>FAQ</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="footer-title">ACCOUNT</h4>
+                            <ul className="footer-links">
+                                <li><a onClick={() => navigate('mypage')}>My Account</a></li>
+                                <li><a onClick={() => navigate('mypage')}>Orders</a></li>
+                                <li><a>Wishlist</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="footer-bottom">
+                        <span>© 2025 REPLICA. All rights reserved.</span>
+                        <span>Privacy Policy | Terms of Service</span>
+                    </div>
+                </footer>
+            );
+        };
+        
+        const ProductCard = ({ product }) => {
+            const { navigate } = useApp();
+            
+            return (
+                <div className="product-card" onClick={() => navigate('product-detail', product)}>
+                    <div className="product-image">
+                        <img src={product.image} alt={product.name} />
+                        {product.badge && <span className="product-badge">{product.badge}</span>}
+                        <button className="product-wishlist" onClick={(e) => e.stopPropagation()}>♡</button>
+                    </div>
+                    <div className="product-brand">{product.brand}</div>
+                    <div className="product-name">{product.name}</div>
+                    <div className="product-price">
+                        {product.salePrice ? (
+                            <>
+                                <span className="original">₩{Number(product.price).toLocaleString()}</span>
+                                <span className="sale">₩{Number(product.salePrice).toLocaleString()}</span>
+                            </>
+                        ) : (
+                            <span>₩{Number(product.price).toLocaleString()}</span>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        
+        // ===== PAGES =====
+        const HomePage = () => {
+            const { navigate, products } = useApp();
+            
+            return (
+                <>
+                    <section className="hero">
+                        <div className="hero-content">
+                            <p className="hero-subtitle">2025 WINTER COLLECTION</p>
+                            <h1 className="hero-title">Winter<br/>Essentials</h1>
+                            <p className="hero-desc">Embrace the cold with timeless elegance.</p>
+                            <button className="btn-primary" onClick={() => navigate('products')}>
+                                VIEW COLLECTION
+                            </button>
+                        </div>
+                    </section>
+                    
+                    <section className="section">
+                        <div className="section-header">
+                            <h2 className="section-title">Weekly Best</h2>
+                            <span className="view-all" onClick={() => navigate('products')}>VIEW ALL +</span>
+                        </div>
+                        {products.length > 0 ? (
+                            <div className="product-grid">
+                                {products.slice(0, 4).map(product => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="empty-state">
+                                <h3>상품 준비 중</h3>
+                                <p>곧 멋진 상품들이 등록됩니다.</p>
+                            </div>
+                        )}
+                    </section>
+                    
+                    <section className="category-section">
+                        <div className="category-card" onClick={() => navigate('products')}>
+                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600" alt="Clothing" />
+                            <div className="category-content">
+                                <h3 className="category-name">Clothing</h3>
+                                <p className="category-count">{products.filter(p => p.category === 'clothing').length} ITEMS</p>
+                            </div>
+                        </div>
+                        <div className="category-card" onClick={() => navigate('products')}>
+                            <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600" alt="Shoes" />
+                            <div className="category-content">
+                                <h3 className="category-name">Shoes</h3>
+                                <p className="category-count">{products.filter(p => p.category === 'shoes').length} ITEMS</p>
+                            </div>
+                        </div>
+                        <div className="category-card" onClick={() => navigate('products')}>
+                            <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600" alt="Bags" />
+                            <div className="category-content">
+                                <h3 className="category-name">Bags</h3>
+                                <p className="category-count">{products.filter(p => p.category === 'bags').length} ITEMS</p>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    {products.length > 4 && (
+                        <section className="section">
+                            <div className="section-header">
+                                <h2 className="section-title">New Arrivals</h2>
+                                <span className="view-all" onClick={() => navigate('products')}>VIEW ALL +</span>
+                            </div>
+                            <div className="product-grid">
+                                {products.slice(4, 8).map(product => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                </>
+            );
+        };
+        
+        const LoginPage = () => {
+            const { login, navigate } = useApp();
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [loading, setLoading] = useState(false);
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+                
+                try {
+                    await login(email, password);
+                    if (email === ADMIN_EMAIL) {
+                        navigate('admin');
+                    } else {
+                        navigate('home');
+                    }
+                } catch (err) {
+                    if (err.code === 'auth/user-not-found') {
+                        setError('등록되지 않은 이메일입니다.');
+                    } else if (err.code === 'auth/wrong-password') {
+                        setError('비밀번호가 일치하지 않습니다.');
+                    } else {
+                        setError('로그인에 실패했습니다.');
+                    }
+                }
+                setLoading(false);
+            };
+            
+            return (
+                <div className="auth-page">
+                    <div className="auth-container">
+                        <h1 className="auth-title">Login</h1>
+                        <p className="auth-subtitle">Welcome back to REPLICA</p>
+                        {error && <div className="auth-error">{error}</div>}
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label className="form-label">EMAIL</label>
+                                <input 
+                                    type="email" 
+                                    className="form-input" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required 
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">PASSWORD</label>
+                                <input 
+                                    type="password" 
+                                    className="form-input"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required 
+                                />
+                            </div>
+                            <button type="submit" className="btn-submit" disabled={loading}>
+                                {loading ? 'LOADING...' : 'LOGIN'}
+                            </button>
+                        </form>
+                        <p className="auth-link">
+                            Don't have an account? <a onClick={() => navigate('register')}>Sign Up</a>
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+        
+        const RegisterPage = () => {
+            const { register, navigate } = useApp();
+            const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' });
+            const [error, setError] = useState('');
+            const [loading, setLoading] = useState(false);
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+                
+                try {
+                    await register(form.email, form.password, form.name, form.phone);
+                    navigate('home');
+                } catch (err) {
+                    if (err.code === 'auth/email-already-in-use') {
+                        setError('이미 사용 중인 이메일입니다.');
+                    } else if (err.code === 'auth/weak-password') {
+                        setError('비밀번호는 6자 이상이어야 합니다.');
+                    } else {
+                        setError('회원가입에 실패했습니다.');
+                    }
+                }
+                setLoading(false);
+            };
+            
+            return (
+                <div className="auth-page">
+                    <div className="auth-container">
+                        <h1 className="auth-title">Sign Up</h1>
+                        <p className="auth-subtitle">Join REPLICA today</p>
+                        {error && <div className="auth-error">{error}</div>}
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label className="form-label">NAME</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input"
+                                    value={form.name}
+                                    onChange={(e) => setForm({...form, name: e.target.value})}
+                                    required 
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">EMAIL</label>
+                                <input 
+                                    type="email" 
+                                    className="form-input"
+                                    value={form.email}
+                                    onChange={(e) => setForm({...form, email: e.target.value})}
+                                    required 
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">PASSWORD</label>
+                                <input 
+                                    type="password" 
+                                    className="form-input"
+                                    value={form.password}
+                                    onChange={(e) => setForm({...form, password: e.target.value})}
+                                    required 
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">PHONE</label>
+                                <input 
+                                    type="tel" 
+                                    className="form-input"
+                                    value={form.phone}
+                                    onChange={(e) => setForm({...form, phone: e.target.value})}
+                                    required 
+                                />
+                            </div>
+                            <button type="submit" className="btn-submit" disabled={loading}>
+                                {loading ? 'LOADING...' : 'CREATE ACCOUNT'}
+                            </button>
+                        </form>
+                        <p className="auth-link">
+                            Already have an account? <a onClick={() => navigate('login')}>Login</a>
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+        
+        const ProductsPage = () => {
+            const { navigate, products } = useApp();
+            
+            return (
+                <>
+                    <div className="page-header">
+                        <h1 className="page-title">All Products</h1>
+                        <p className="breadcrumb">
+                            <a onClick={() => navigate('home')}>Home</a> / Products
+                        </p>
+                    </div>
+                    <section className="section">
+                        <div className="products-toolbar">
+                            <span className="products-count">{products.length} items</span>
+                            <div className="products-sort">
+                                <select>
+                                    <option>Sort by: Latest</option>
+                                    <option>Price: Low to High</option>
+                                    <option>Price: High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        {products.length > 0 ? (
+                            <div className="product-grid">
+                                {products.map(product => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="empty-state">
+                                <h3>상품이 없습니다</h3>
+                                <p>곧 새로운 상품이 등록됩니다.</p>
+                            </div>
+                        )}
+                    </section>
+                </>
+            );
+        };
+        
+        const ProductDetailPage = () => {
+            const { addToCart, navigate, selectedProduct, products } = useApp();
+            const product = selectedProduct || products[0];
+            
+            if (!product) {
+                return (
+                    <div className="section empty-state">
+                        <h3>상품을 찾을 수 없습니다</h3>
+                        <button className="btn-primary" style={{background: 'black', color: 'white', border: 'none', marginTop: '20px'}} onClick={() => navigate('products')}>
+                            상품 목록으로
+                        </button>
+                    </div>
+                );
+            }
+            
+            return (
+                <section className="section" style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start'}}>
+                    <div className="product-image" style={{aspectRatio: '3/4'}}>
+                        <img src={product.image} alt={product.name} style={{width:'100%', height:'100%', objectFit:'cover'}} />
+                    </div>
+                    <div style={{paddingTop: '40px'}}>
+                        <p className="product-brand" style={{fontSize: '13px', marginBottom: '10px'}}>{product.brand}</p>
+                        <h1 style={{fontFamily: 'var(--font-display)', fontSize: '32px', marginBottom: '20px'}}>{product.name}</h1>
+                        <p className="product-price" style={{fontSize: '24px', marginBottom: '40px'}}>
+                            {product.salePrice ? (
+                                <>
+                                    <span className="original">₩{Number(product.price).toLocaleString()}</span>
+                                    <span className="sale">₩{Number(product.salePrice).toLocaleString()}</span>
+                                </>
+                            ) : (
+                                `₩${Number(product.price).toLocaleString()}`
+                            )}
+                        </p>
+                        <p style={{color: 'var(--color-gray-600)', lineHeight: '1.8', marginBottom: '40px'}}>
+                            {product.description || 'Premium quality product crafted with the finest materials. This piece represents the perfect blend of contemporary design and timeless elegance.'}
+                        </p>
+                        <button 
+                            className="btn-submit" 
+                            onClick={() => { addToCart(product); navigate('cart'); }}
+                            style={{marginBottom: '15px'}}
+                        >
+                            ADD TO CART
+                        </button>
+                        <button className="btn-submit" style={{background: 'white', color: 'black', border: '1px solid black'}}>
+                            ADD TO WISHLIST
+                        </button>
+                    </div>
+                </section>
+            );
+        };
+        
+        const CartPage = () => {
+            const { cart, updateQty, removeFromCart, navigate, user } = useApp();
+            const total = cart.reduce((sum, item) => sum + (Number(item.salePrice) || Number(item.price)) * item.qty, 0);
+            
+            if (cart.length === 0) {
+                return (
+                    <div className="cart-page" style={{textAlign: 'center', paddingTop: '100px'}}>
+                        <h1 className="auth-title">Your Cart is Empty</h1>
+                        <p style={{color: 'var(--color-gray-600)', marginTop: '20px', marginBottom: '40px'}}>
+                            Discover our collection and add items to your cart.
+                        </p>
+                        <button className="btn-primary" style={{background: 'black', color: 'white', border: 'none'}} onClick={() => navigate('products')}>
+                            CONTINUE SHOPPING
+                        </button>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="cart-page">
+                    <div className="cart-header">
+                        <h1 className="page-title">Shopping Cart</h1>
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 400px', gap: '60px'}}>
+                        <div className="cart-items">
+                            {cart.map(item => (
+                                <div key={item.id} className="cart-item">
+                                    <div className="cart-item-image">
+                                        <img src={item.image} alt={item.name} />
+                                    </div>
+                                    <div className="cart-item-info">
+                                        <h3>{item.brand}</h3>
+                                        <p>{item.name}</p>
+                                    </div>
+                                    <div className="cart-item-qty">
+                                        <button className="qty-btn" onClick={() => updateQty(item.id, item.qty - 1)}>−</button>
+                                        <span>{item.qty}</span>
+                                        <button className="qty-btn" onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
+                                    </div>
+                                    <div style={{textAlign: 'right'}}>
+                                        <p style={{fontWeight: '600'}}>₩{((Number(item.salePrice) || Number(item.price)) * item.qty).toLocaleString()}</p>
+                                        <button style={{fontSize: '12px', color: 'var(--color-gray-400)', marginTop: '10px', background: 'none', border: 'none', cursor: 'pointer'}} onClick={() => removeFromCart(item.id)}>
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="cart-summary">
+                            <h3 style={{fontSize: '14px', fontWeight: '700', letterSpacing: '1px', marginBottom: '30px'}}>ORDER SUMMARY</h3>
+                            <div className="cart-summary-row">
+                                <span>Subtotal</span>
+                                <span>₩{total.toLocaleString()}</span>
+                            </div>
+                            <div className="cart-summary-row">
+                                <span>Shipping</span>
+                                <span>Free</span>
+                            </div>
+                            <div className="cart-summary-total">
+                                <span>Total</span>
+                                <span>₩{total.toLocaleString()}</span>
+                            </div>
+                            <button 
+                                className="btn-checkout"
+                                onClick={() => user ? navigate('checkout') : navigate('login')}
+                            >
+                                {user ? 'PROCEED TO CHECKOUT' : 'LOGIN TO CHECKOUT'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        const CheckoutPage = () => {
+            const { cart, user, navigate, createOrder } = useApp();
+            const total = cart.reduce((sum, item) => sum + (Number(item.salePrice) || Number(item.price)) * item.qty, 0);
+            const [submitted, setSubmitted] = useState(false);
+            const [loading, setLoading] = useState(false);
+            const [form, setForm] = useState({ name: user?.name || '', phone: user?.phone || '', address: '', detail: '', note: '' });
+            
+            const handleSubmit = async () => {
+                if (!form.name || !form.phone || !form.address) {
+                    alert('필수 정보를 입력해주세요.');
+                    return;
+                }
+                
+                setLoading(true);
+                try {
+                    await createOrder({
+                        items: cart.map(item => ({
+                            id: item.id,
+                            brand: item.brand,
+                            name: item.name,
+                            price: item.price,
+                            salePrice: item.salePrice,
+                            qty: item.qty,
+                            image: item.image
+                        })),
+                        total,
+                        shippingName: form.name,
+                        shippingPhone: form.phone,
+                        shippingAddress: `${form.address} ${form.detail}`,
+                        note: form.note
+                    });
+                    setSubmitted(true);
+                } catch (error) {
+                    console.error('Order error:', error);
+                }
+                setLoading(false);
+            };
+            
+            if (submitted) {
+                return (
+                    <div className="cart-page" style={{textAlign: 'center', paddingTop: '100px'}}>
+                        <h1 className="auth-title">Order Complete!</h1>
+                        <p style={{color: 'var(--color-gray-600)', marginTop: '20px', marginBottom: '40px'}}>
+                            Your order has been placed successfully.<br/>
+                            We will contact you shortly for payment details.
+                        </p>
+                        <button className="btn-primary" style={{background: 'black', color: 'white', border: 'none'}} onClick={() => navigate('mypage')}>
+                            VIEW MY ORDERS
+                        </button>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="cart-page">
+                    <div className="cart-header">
+                        <h1 className="page-title">Checkout</h1>
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 400px', gap: '60px'}}>
+                        <div>
+                            <h3 style={{fontSize: '14px', fontWeight: '700', letterSpacing: '1px', marginBottom: '30px'}}>SHIPPING INFORMATION</h3>
+                            <div className="form-group">
+                                <label className="form-label">NAME *</label>
+                                <input type="text" className="form-input" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">PHONE *</label>
+                                <input type="tel" className="form-input" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">ADDRESS *</label>
+                                <input type="text" className="form-input" placeholder="주소 입력" value={form.address} onChange={(e) => setForm({...form, address: e.target.value})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">DETAIL ADDRESS</label>
+                                <input type="text" className="form-input" value={form.detail} onChange={(e) => setForm({...form, detail: e.target.value})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">ORDER NOTE (OPTIONAL)</label>
+                                <textarea className="form-input" rows="3" style={{resize: 'vertical'}} value={form.note} onChange={(e) => setForm({...form, note: e.target.value})}></textarea>
+                            </div>
+                        </div>
+                        <div className="cart-summary">
+                            <h3 style={{fontSize: '14px', fontWeight: '700', letterSpacing: '1px', marginBottom: '30px'}}>ORDER SUMMARY</h3>
+                            {cart.map(item => (
+                                <div key={item.id} style={{display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px'}}>
+                                    <span>{item.brand} x {item.qty}</span>
+                                    <span>₩{((Number(item.salePrice) || Number(item.price)) * item.qty).toLocaleString()}</span>
+                                </div>
+                            ))}
+                            <div className="cart-summary-total" style={{marginTop: '20px'}}>
+                                <span>Total</span>
+                                <span>₩{total.toLocaleString()}</span>
+                            </div>
+                            <p style={{fontSize: '12px', color: 'var(--color-gray-600)', marginTop: '20px', lineHeight: '1.6'}}>
+                                * 결제는 별도 안내 (계좌이체)
+                            </p>
+                            <button className="btn-checkout" onClick={handleSubmit} disabled={loading}>
+                                {loading ? 'PROCESSING...' : 'PLACE ORDER'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        const MyPage = () => {
+            const { user, navigate, getUserOrders } = useApp();
+            const [orders, setOrders] = useState([]);
+            const [loading, setLoading] = useState(true);
+            
+            useEffect(() => {
+                if (user) {
+                    getUserOrders().then(data => {
+                        setOrders(data);
+                        setLoading(false);
+                    });
+                }
+            }, [user]);
+            
+            if (!user) {
+                navigate('login');
+                return null;
+            }
+            
+            const statusText = {
+                pending: '주문 확인중',
+                confirmed: '결제 완료',
+                shipped: '배송중',
+                completed: '배송 완료'
+            };
+            
+            return (
+                <div className="cart-page">
+                    <div className="cart-header">
+                        <h1 className="page-title">My Page</h1>
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: '200px 1fr', gap: '60px'}}>
+                        <div>
+                            <nav style={{fontSize: '14px'}}>
+                                <p style={{fontWeight: '700', marginBottom: '20px', paddingBottom: '10px', borderBottom: '2px solid black'}}>Order History</p>
+                                <p style={{color: 'var(--color-gray-600)', marginBottom: '15px', cursor: 'pointer'}}>Profile Settings</p>
+                                <p style={{color: 'var(--color-gray-600)', cursor: 'pointer'}}>Wishlist</p>
+                            </nav>
+                        </div>
+                        <div>
+                            <h3 style={{fontSize: '18px', fontWeight: '700', marginBottom: '30px'}}>Order History</h3>
+                            {loading ? (
+                                <div className="empty-state">
+                                    <div className="loading-spinner"></div>
+                                </div>
+                            ) : orders.length === 0 ? (
+                                <div className="empty-state">
+                                    <h3>No orders yet</h3>
+                                    <p>Start shopping to see your orders here.</p>
+                                </div>
+                            ) : (
+                                orders.map(order => (
+                                    <div key={order.id} style={{border: '1px solid var(--color-gray-200)', padding: '25px', marginBottom: '20px'}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '15px'}}>
+                                            <span style={{fontWeight: '700'}}>{order.id.slice(0, 8).toUpperCase()}</span>
+                                            <span className={`status-badge status-${order.status}`}>{statusText[order.status]}</span>
+                                        </div>
+                                        <p style={{fontSize: '14px', color: 'var(--color-gray-600)', marginBottom: '10px'}}>
+                                            {order.createdAt?.toDate?.()?.toLocaleDateString() || 'Date'}
+                                        </p>
+                                        <p style={{fontSize: '14px'}}>{order.items.map(i => i.brand).join(', ')}</p>
+                                        <p style={{fontWeight: '600', marginTop: '15px'}}>₩{order.total.toLocaleString()}</p>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // ===== ADMIN PAGES =====
+        const AdminSidebar = ({ currentMenu, setCurrentMenu }) => {
+            const { navigate, logout } = useApp();
+            
+            const menuItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+                { id: 'products', label: 'Products', icon: '🛍️' },
+                { id: 'orders', label: 'Orders', icon: '📦' },
+                { id: 'members', label: 'Members', icon: '👥' },
+            ];
+            
+            return (
+                <aside className="admin-sidebar">
+                    <div className="admin-logo">
+                        REPLICA
+                        <span>ADMIN</span>
+                    </div>
+                    <ul className="admin-nav">
+                        {menuItems.map(item => (
+                            <li 
+                                key={item.id}
+                                className={`admin-nav-item ${currentMenu === item.id ? 'active' : ''}`}
+                                onClick={() => setCurrentMenu(item.id)}
+                            >
+                                <span>{item.icon}</span>
+                                {item.label}
+                            </li>
+                        ))}
+                        <div className="admin-nav-divider"></div>
+                        <li className="admin-nav-item" onClick={() => navigate('home')}>
+                            <span>🏠</span>
+                            Go to Shop
+                        </li>
+                        <li className="admin-nav-item" onClick={logout}>
+                            <span>🚪</span>
+                            Logout
+                        </li>
+                    </ul>
+                </aside>
+            );
+        };
+        
+        const AdminDashboard = () => {
+            const { orders, products, members } = useApp();
+            
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(o => o.createdAt?.toDate?.()?.toDateString() === today).length;
+            const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const pendingOrders = orders.filter(o => o.status === 'pending').length;
+            
+            return (
+                <>
+                    <div className="admin-stats">
+                        <div className="stat-card">
+                            <h3>TODAY ORDERS</h3>
+                            <div className="value">{todayOrders}</div>
+                        </div>
+                        <div className="stat-card">
+                            <h3>TOTAL REVENUE</h3>
+                            <div className="value">₩{(totalRevenue / 10000).toFixed(0)}만</div>
+                        </div>
+                        <div className="stat-card">
+                            <h3>PENDING ORDERS</h3>
+                            <div className="value">{pendingOrders}</div>
+                        </div>
+                        <div className="stat-card">
+                            <h3>TOTAL MEMBERS</h3>
+                            <div className="value">{members.length}</div>
+                        </div>
+                    </div>
+                    
+                    <div className="admin-table-container">
+                        <div className="admin-table-header">
+                            <h2>Recent Orders</h2>
+                        </div>
+                        {orders.length > 0 ? (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ORDER ID</th>
+                                        <th>CUSTOMER</th>
+                                        <th>DATE</th>
+                                        <th>TOTAL</th>
+                                        <th>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.slice(0, 5).map(order => (
+                                        <tr key={order.id}>
+                                            <td>{order.id.slice(0, 8).toUpperCase()}</td>
+                                            <td>{order.userName}</td>
+                                            <td>{order.createdAt?.toDate?.()?.toLocaleDateString() || '-'}</td>
+                                            <td>₩{order.total?.toLocaleString()}</td>
+                                            <td><span className={`status-badge status-${order.status}`}>{order.status}</span></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div className="empty-state">
+                                <p>No orders yet</p>
+                            </div>
+                        )}
+                    </div>
+                </>
+            );
+        };
+        
+        const AdminProducts = () => {
+            const { products, addProduct, updateProduct, deleteProduct } = useApp();
+            const [showModal, setShowModal] = useState(false);
+            const [editingProduct, setEditingProduct] = useState(null);
+            const [form, setForm] = useState({ brand: '', name: '', price: '', salePrice: '', category: 'clothing', stock: '', image: '', description: '' });
+            const [loading, setLoading] = useState(false);
+            const [uploading, setUploading] = useState(false);
+            
+            const handleEdit = (product) => {
+                setEditingProduct(product);
+                setForm({
+                    brand: product.brand || '',
+                    name: product.name || '',
+                    price: product.price || '',
+                    salePrice: product.salePrice || '',
+                    category: product.category || 'clothing',
+                    stock: product.stock || '',
+                    image: product.image || '',
+                    description: product.description || ''
+                });
+                setShowModal(true);
+            };
+            
+            const handleNew = () => {
+                setEditingProduct(null);
+                setForm({ brand: '', name: '', price: '', salePrice: '', category: 'clothing', stock: '', image: '', description: '' });
+                setShowModal(true);
+            };
+            
+            const handleSubmit = async () => {
+                if (!form.brand || !form.name || !form.price || !form.image) {
+                    alert('필수 항목을 입력해주세요. (브랜드, 이름, 가격, 이미지)');
+                    return;
+                }
+                
+                setLoading(true);
+                const productData = {
+                    brand: form.brand,
+                    name: form.name,
+                    price: Number(form.price),
+                    salePrice: form.salePrice ? Number(form.salePrice) : null,
+                    category: form.category,
+                    stock: Number(form.stock) || 0,
+                    image: form.image,
+                    description: form.description
+                };
+                
+                if (editingProduct) {
+                    await updateProduct(editingProduct.id, productData);
+                } else {
+                    await addProduct(productData);
+                }
+                setShowModal(false);
+                setLoading(false);
+            };
+            
+            const handleDelete = async (productId) => {
+                if (window.confirm('정말 삭제하시겠습니까?')) {
+                    await deleteProduct(productId);
+                }
+            };
+            
+            return (
+                <>
+                    <div className="admin-table-container">
+                        <div className="admin-table-header">
+                            <h2>All Products ({products.length})</h2>
+                            <button className="btn-admin btn-admin-primary" onClick={handleNew}>
+                                + Add Product
+                            </button>
+                        </div>
+                        {products.length > 0 ? (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>IMAGE</th>
+                                        <th>BRAND</th>
+                                        <th>NAME</th>
+                                        <th>PRICE</th>
+                                        <th>STOCK</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {products.map(product => (
+                                        <tr key={product.id}>
+                                            <td><img src={product.image} alt={product.name} /></td>
+                                            <td>{product.brand}</td>
+                                            <td>{product.name}</td>
+                                            <td>
+                                                {product.salePrice ? (
+                                                    <>
+                                                        <span style={{textDecoration: 'line-through', color: '#999', marginRight: '8px'}}>₩{Number(product.price).toLocaleString()}</span>
+                                                        <span style={{color: 'var(--color-danger)'}}>₩{Number(product.salePrice).toLocaleString()}</span>
+                                                    </>
+                                                ) : (
+                                                    `₩${Number(product.price).toLocaleString()}`
+                                                )}
+                                            </td>
+                                            <td>{product.stock || 0}</td>
+                                            <td>
+                                                <button className="btn-admin btn-admin-secondary btn-admin-sm" style={{marginRight: '8px'}} onClick={() => handleEdit(product)}>Edit</button>
+                                                <button className="btn-admin btn-admin-danger btn-admin-sm" onClick={() => handleDelete(product.id)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div className="empty-state">
+                                <h3>상품이 없습니다</h3>
+                                <p>첫 번째 상품을 등록해보세요.</p>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => !uploading && setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h2>{editingProduct ? 'Edit Product' : 'Add Product'}</h2>
+                                    <span className="modal-close" onClick={() => !uploading && setShowModal(false)}>×</span>
+                                </div>
+                                
+                                <ImageUpload 
+                                    value={form.image}
+                                    onChange={(url) => setForm({...form, image: url})}
+                                    onUploading={setUploading}
+                                />
+                                
+                                <div className="admin-form-group">
+                                    <label>BRAND *</label>
+                                    <input type="text" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} />
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>NAME *</label>
+                                    <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                                </div>
+                                <div className="admin-form-row">
+                                    <div className="admin-form-group">
+                                        <label>PRICE *</label>
+                                        <input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} />
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>SALE PRICE</label>
+                                        <input type="number" value={form.salePrice} onChange={e => setForm({...form, salePrice: e.target.value})} />
+                                    </div>
+                                </div>
+                                <div className="admin-form-row">
+                                    <div className="admin-form-group">
+                                        <label>CATEGORY</label>
+                                        <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                                            <option value="clothing">Clothing</option>
+                                            <option value="shoes">Shoes</option>
+                                            <option value="bags">Bags</option>
+                                            <option value="accessories">Accessories</option>
+                                        </select>
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>STOCK</label>
+                                        <input type="number" value={form.stock} onChange={e => setForm({...form, stock: e.target.value})} />
+                                    </div>
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>DESCRIPTION</label>
+                                    <textarea rows="3" value={form.description} onChange={e => setForm({...form, description: e.target.value})}></textarea>
+                                </div>
+                                <div className="admin-form-actions">
+                                    <button className="btn-admin btn-admin-primary" onClick={handleSubmit} disabled={loading || uploading}>
+                                        {loading ? 'SAVING...' : uploading ? 'UPLOADING...' : editingProduct ? 'Update Product' : 'Add Product'}
+                                    </button>
+                                    <button className="btn-admin btn-admin-secondary" onClick={() => setShowModal(false)} disabled={uploading}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+        
+        const AdminOrders = () => {
+            const { orders, updateOrderStatus } = useApp();
+            const [selectedOrder, setSelectedOrder] = useState(null);
+            
+            const statusOptions = [
+                { value: 'pending', label: '주문 확인중' },
+                { value: 'confirmed', label: '결제 완료' },
+                { value: 'shipped', label: '배송중' },
+                { value: 'completed', label: '배송 완료' },
+            ];
+            
+            return (
+                <>
+                    <div className="admin-table-container">
+                        <div className="admin-table-header">
+                            <h2>All Orders ({orders.length})</h2>
+                        </div>
+                        {orders.length > 0 ? (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ORDER ID</th>
+                                        <th>CUSTOMER</th>
+                                        <th>ITEMS</th>
+                                        <th>TOTAL</th>
+                                        <th>DATE</th>
+                                        <th>STATUS</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map(order => (
+                                        <tr key={order.id}>
+                                            <td>{order.id.slice(0, 8).toUpperCase()}</td>
+                                            <td>
+                                                <div>{order.userName}</div>
+                                                <div style={{fontSize: '12px', color: '#999'}}>{order.shippingPhone}</div>
+                                            </td>
+                                            <td>{order.items?.length || 0} items</td>
+                                            <td>₩{order.total?.toLocaleString()}</td>
+                                            <td>{order.createdAt?.toDate?.()?.toLocaleDateString() || '-'}</td>
+                                            <td>
+                                                <select 
+                                                    value={order.status}
+                                                    onChange={e => updateOrderStatus(order.id, e.target.value)}
+                                                    style={{padding: '5px 10px', border: '1px solid #ddd'}}
+                                                >
+                                                    {statusOptions.map(opt => (
+                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                    ))}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button className="btn-admin btn-admin-secondary btn-admin-sm" onClick={() => setSelectedOrder(order)}>
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <div className="empty-state">
+                                <h3>주문이 없습니다</h3>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {selectedOrder && (
+                        <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h2>Order {selectedOrder.id.slice(0, 8).toUpperCase()}</h2>
+                                    <span className="modal-close" onClick={() => setSelectedOrder(null)}>×</span>
+                                </div>
+                                <div style={{marginBottom: '20px'}}>
+                                    <h4 style={{fontSize: '12px', fontWeight: '700', letterSpacing: '1px', marginBottom: '10px'}}>CUSTOMER INFO</h4>
+                                    <p>{selectedOrder.shippingName}</p>
+                                    <p style={{color: '#666'}}>{selectedOrder.shippingPhone}</p>
+                                    <p style={{color: '#666'}}>{selectedOrder.shippingAddress}</p>
+                                    {selectedOrder.note && <p style={{color: '#666', marginTop: '10px'}}>메모: {selectedOrder.note}</p>}
+                                </div>
+                                <div style={{marginBottom: '20px'}}>
+                                    <h4 style={{fontSize: '12px', fontWeight: '700', letterSpacing: '1px', marginBottom: '10px'}}>ORDER ITEMS</h4>
+                                    {selectedOrder.items?.map((item, idx) => (
+                                        <div key={idx} style={{display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee'}}>
+                                            <span>{item.brand} - {item.name} x {item.qty}</span>
+                                            <span>₩{((Number(item.salePrice) || Number(item.price)) * item.qty).toLocaleString()}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: '700', fontSize: '18px', paddingTop: '20px', borderTop: '2px solid #111'}}>
+                                    <span>Total</span>
+                                    <span>₩{selectedOrder.total?.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+        
+        const AdminMembers = () => {
+            const { members } = useApp();
+            
+            return (
+                <div className="admin-table-container">
+                    <div className="admin-table-header">
+                        <h2>All Members ({members.length})</h2>
+                    </div>
+                    {members.length > 0 ? (
+                        <table className="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>EMAIL</th>
+                                    <th>PHONE</th>
+                                    <th>JOIN DATE</th>
+                                    <th>ORDERS</th>
+                                    <th>TOTAL SPENT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {members.map(member => (
+                                    <tr key={member.id}>
+                                        <td>{member.name}</td>
+                                        <td>{member.email}</td>
+                                        <td>{member.phone || '-'}</td>
+                                        <td>{member.createdAt?.toDate?.()?.toLocaleDateString() || '-'}</td>
+                                        <td>{member.orderCount || 0}</td>
+                                        <td>₩{(member.totalSpent || 0).toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div className="empty-state">
+                            <h3>회원이 없습니다</h3>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        const AdminPage = () => {
+            const [currentMenu, setCurrentMenu] = useState('dashboard');
+            
+            const menuTitles = {
+                dashboard: 'Dashboard',
+                products: 'Product Management',
+                orders: 'Order Management',
+                members: 'Member Management'
+            };
+            
+            const renderContent = () => {
+                switch(currentMenu) {
+                    case 'dashboard': return <AdminDashboard />;
+                    case 'products': return <AdminProducts />;
+                    case 'orders': return <AdminOrders />;
+                    case 'members': return <AdminMembers />;
+                    default: return <AdminDashboard />;
+                }
+            };
+            
+            return (
+                <div className="admin-layout">
+                    <AdminSidebar currentMenu={currentMenu} setCurrentMenu={setCurrentMenu} />
+                    <main className="admin-main">
+                        <div className="admin-header">
+                            <h1>{menuTitles[currentMenu]}</h1>
+                        </div>
+                        <div className="admin-content">
+                            {renderContent()}
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+        
+        // ===== ROUTER =====
+        const Router = () => {
+            const { currentPage, isAdmin, loading } = useApp();
+            
+            if (loading) return <LoadingScreen />;
+            
+            if (currentPage === 'admin' && isAdmin) return <AdminPage />;
+            
+            const pages = {
+                'home': <HomePage />,
+                'login': <LoginPage />,
+                'register': <RegisterPage />,
+                'products': <ProductsPage />,
+                'product-detail': <ProductDetailPage />,
+                'cart': <CartPage />,
+                'checkout': <CheckoutPage />,
+                'mypage': <MyPage />,
+            };
+            
+            return (
+                <>
+                    <Header />
+                    <main>{pages[currentPage] || <HomePage />}</main>
+                    <Footer />
+                </>
+            );
+        };
+        
+        // ===== APP =====
+        const App = () => (
+            <AppProvider>
+                <Router />
+                <Toast />
+            </AppProvider>
+        );
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
