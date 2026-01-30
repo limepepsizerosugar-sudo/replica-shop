@@ -89,8 +89,8 @@
         }
         
         .floating-btn {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -115,8 +115,8 @@
         }
         
         .floating-btn svg {
-            width: 28px;
-            height: 28px;
+            width: 34px;
+            height: 34px;
         }
         
         .floating-btn.kakao svg {
@@ -134,12 +134,12 @@
                 gap: 10px;
             }
             .floating-btn {
-                width: 45px;
-                height: 45px;
+                width: 56px;
+                height: 56px;
             }
             .floating-btn svg {
-                width: 24px;
-                height: 24px;
+                width: 30px;
+                height: 30px;
             }
         }
         
@@ -392,6 +392,92 @@
         
         .info-content p {
             margin-bottom: 15px;
+        }
+        
+        /* Popup */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 20px;
+        }
+        
+        .popup-container {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+            background: var(--white);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .popup-image {
+            width: 100%;
+            display: block;
+            cursor: pointer;
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.5);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .popup-close:hover {
+            background: rgba(0,0,0,0.7);
+        }
+        
+        .popup-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--gray-100);
+            font-size: 13px;
+        }
+        
+        .popup-today {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+        
+        .popup-today input {
+            cursor: pointer;
+        }
+        
+        .popup-close-btn {
+            background: none;
+            border: none;
+            font-size: 13px;
+            color: var(--gray-600);
+            cursor: pointer;
+        }
+        
+        .popup-close-btn:hover {
+            color: var(--black);
+        }
+        
+        @media (max-width: 768px) {
+            .popup-container {
+                max-width: 320px;
+            }
         }
         
         /* Toast */
@@ -1132,10 +1218,21 @@
             margin: 30px auto 0;
             padding-top: 20px;
             border-top: 1px solid var(--gray-300);
-            font-size: 12px;
+            font-size: 11px;
             color: var(--gray-400);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                font-size: 10px;
+            }
         }
         
         /* Auth Page */
@@ -1685,6 +1782,25 @@
             const [reviews, setReviews] = useState([]);
             const [faqs, setFaqs] = useState([]);
             const [siteInfo, setSiteInfo] = useState({ shipping: '', exchange: '' });
+            const [popup, setPopup] = useState({
+                active: true,
+                image: '',
+                link: 'new'
+            });
+            
+            // 기본 팝업 이미지 (SVG)
+            const defaultPopupImage = `data:image/svg+xml,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+                    <rect fill="#111" width="400" height="500"/>
+                    <rect fill="#e53935" x="0" y="100" width="400" height="300"/>
+                    <text x="200" y="60" text-anchor="middle" fill="#fff" font-family="Arial Black" font-size="24" font-weight="900">WINTER SALE</text>
+                    <text x="200" y="220" text-anchor="middle" fill="#fff" font-family="Arial Black" font-size="120" font-weight="900">50%</text>
+                    <text x="200" y="290" text-anchor="middle" fill="#fff" font-family="Arial Black" font-size="36" font-weight="900">OFF</text>
+                    <text x="200" y="350" text-anchor="middle" fill="#fff" font-family="Arial" font-size="18">전 상품 최대 50% 할인</text>
+                    <rect fill="#fff" x="120" y="420" width="160" height="45" rx="4"/>
+                    <text x="200" y="450" text-anchor="middle" fill="#111" font-family="Arial Black" font-size="16" font-weight="900">SHOP NOW</text>
+                </svg>
+            `)}`;
             
             const showToast = (message, type = 'info') => {
                 setToast({ message, type });
@@ -1805,6 +1921,14 @@
             useEffect(() => {
                 const unsub = db.collection('siteInfo').doc('info').onSnapshot((doc) => {
                     if (doc.exists) setSiteInfo(doc.data());
+                });
+                return () => unsub();
+            }, []);
+            
+            // Popup
+            useEffect(() => {
+                const unsub = db.collection('siteInfo').doc('popup').onSnapshot((doc) => {
+                    if (doc.exists) setPopup(doc.data());
                 });
                 return () => unsub();
             }, []);
@@ -1968,6 +2092,12 @@
                 showToast('저장되었습니다', 'success');
             };
             
+            // Popup 함수
+            const updatePopup = async (data) => {
+                await db.collection('siteInfo').doc('popup').set(data, { merge: true });
+                showToast('팝업이 저장되었습니다', 'success');
+            };
+            
             const getProductsByCategory = (category) => {
                 if (category === 'new') return products.slice(0, 20);
                 if (category === 'brand') return products;
@@ -1986,7 +2116,8 @@
                     qnas, addQna, answerQna, deleteQna,
                     reviews, addReview, deleteReview,
                     faqs, addFaq, updateFaq, deleteFaq,
-                    siteInfo, updateSiteInfo
+                    siteInfo, updateSiteInfo,
+                    popup, updatePopup, defaultPopupImage
                 }}>
                     {children}
                 </AppContext.Provider>
@@ -2018,6 +2149,62 @@
                             <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3zm5.907 8.06l1.47-1.424a.472.472 0 0 0-.656-.678l-1.928 1.866V9.282a.472.472 0 0 0-.944 0v2.557a.471.471 0 0 0 0 .222V13.5a.472.472 0 0 0 .944 0v-1.363l.427-.413 1.428 2.033a.472.472 0 1 0 .773-.543l-1.514-2.155zm-2.958 1.924h-1.46V9.297a.472.472 0 0 0-.943 0v4.159c0 .26.21.472.471.472h1.932a.472.472 0 1 0 0-.944zm-5.857-1.092l.696-1.707.638 1.707H9.092zm2.523.488l.002-.016a.469.469 0 0 0-.127-.32l-1.046-2.8a.69.69 0 0 0-.627-.474.696.696 0 0 0-.653.447l-1.661 4.075a.472.472 0 0 0 .874.357l.33-.813h2.07l.299.8a.472.472 0 1 0 .884-.33l-.345-.926zm-7.086 1.028l1.078-1.353-1.108-1.39a.472.472 0 1 1 .738-.587l.755.948.73-.947a.472.472 0 1 1 .746.576l-1.093 1.416 1.108 1.389a.472.472 0 0 1-.37.765.47.47 0 0 1-.369-.177l-.772-.97-.77.97a.472.472 0 0 1-.673-.64z"/>
                         </svg>
                     </a>
+                </div>
+            );
+        };
+        
+        const PopupModal = () => {
+            const { popup, navigate, defaultPopupImage } = useApp();
+            const [show, setShow] = useState(false);
+            
+            useEffect(() => {
+                if (popup?.active) {
+                    const hideUntil = localStorage.getItem('popupHideUntil');
+                    if (hideUntil && new Date().getTime() < parseInt(hideUntil)) {
+                        setShow(false);
+                    } else {
+                        setShow(true);
+                    }
+                }
+            }, [popup]);
+            
+            const handleClose = () => setShow(false);
+            
+            const handleTodayClose = () => {
+                const tomorrow = new Date();
+                tomorrow.setHours(23, 59, 59, 999);
+                localStorage.setItem('popupHideUntil', tomorrow.getTime().toString());
+                setShow(false);
+            };
+            
+            const handleClick = () => {
+                if (popup?.link) {
+                    if (popup.link.startsWith('http')) {
+                        window.open(popup.link, '_blank');
+                    } else {
+                        navigate(popup.link);
+                    }
+                }
+                setShow(false);
+            };
+            
+            if (!show || !popup?.active) return null;
+            
+            const imageUrl = popup?.image || defaultPopupImage;
+            
+            return (
+                <div className="popup-overlay">
+                    <div className="popup-container">
+                        <button className="popup-close" onClick={handleClose}>×</button>
+                        <img src={imageUrl} alt="팝업" className="popup-image" onClick={handleClick} />
+                        <div className="popup-footer">
+                            <label className="popup-today">
+                                <input type="checkbox" onChange={handleTodayClose} />
+                                오늘 하루 안보기
+                            </label>
+                            <button className="popup-close-btn" onClick={handleClose}>닫기</button>
+                        </div>
+                    </div>
                 </div>
             );
         };
@@ -2961,8 +3148,69 @@
             );
         };
         
+        // 관리자 팝업 관리 섹션
+        const AdminPopupSection = ({ popup, updatePopup }) => {
+            const [active, setActive] = useState(popup?.active || false);
+            const [image, setImage] = useState(popup?.image || '');
+            const [link, setLink] = useState(popup?.link || '');
+            
+            useEffect(() => {
+                setActive(popup?.active || false);
+                setImage(popup?.image || '');
+                setLink(popup?.link || '');
+            }, [popup]);
+            
+            const handleSave = () => {
+                updatePopup({ active, image, link });
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>팝업 설정</h2></div>
+                    <div style={{padding:'25px'}}>
+                        <div className="form-group">
+                            <label className="form-label" style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                                <input type="checkbox" checked={active} onChange={e => setActive(e.target.checked)} style={{width:'18px', height:'18px'}} />
+                                팝업 활성화
+                            </label>
+                            <p style={{fontSize:'12px', color:'#888', marginTop:'5px'}}>체크하면 메인 화면에 팝업이 노출됩니다</p>
+                        </div>
+                        
+                        <div className="form-group" style={{marginTop:'25px'}}>
+                            <label className="form-label">팝업 이미지 URL</label>
+                            <p style={{fontSize:'12px', color:'#888', marginBottom:'8px'}}>imgbb.com에서 업로드 후 직접링크 (i.ibb.co로 시작) 복사</p>
+                            <input className="form-input" value={image} onChange={e => setImage(e.target.value)} placeholder="https://i.ibb.co/xxxxx/popup.jpg" />
+                            {image && image.startsWith('http') && (
+                                <div style={{marginTop:'15px', padding:'15px', background:'#f5f5f5', borderRadius:'8px'}}>
+                                    <p style={{fontSize:'12px', color:'#666', marginBottom:'10px'}}>미리보기:</p>
+                                    <img src={image} style={{maxWidth:'300px', maxHeight:'400px', objectFit:'contain', border:'1px solid #ddd'}} />
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="form-group" style={{marginTop:'25px'}}>
+                            <label className="form-label">클릭 시 이동할 링크 (선택)</label>
+                            <p style={{fontSize:'12px', color:'#888', marginBottom:'8px'}}>페이지 이름 (new, clothing 등) 또는 외부 URL</p>
+                            <input className="form-input" value={link} onChange={e => setLink(e.target.value)} placeholder="new 또는 https://example.com" />
+                        </div>
+                        
+                        <button className="btn-submit" style={{marginTop:'30px'}} onClick={handleSave}>저장하기</button>
+                        
+                        <div style={{marginTop:'40px', padding:'20px', background:'#f9f9f9', borderRadius:'8px'}}>
+                            <h4 style={{fontSize:'14px', fontWeight:'600', marginBottom:'15px'}}>💡 팝업 이미지 예시</h4>
+                            <p style={{fontSize:'13px', color:'#666', lineHeight:'1.7'}}>
+                                권장 사이즈: 400 x 500px (세로형)<br/>
+                                파일 형식: JPG, PNG<br/>
+                                내용 예시: 세일 안내, 신상품 안내, 이벤트 등
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
         const AdminPage = () => {
-            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo } = useApp();
+            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo, popup, updatePopup } = useApp();
             const [menu, setMenu] = useState('dashboard');
             const [showModal, setShowModal] = useState(false);
             const [editingProduct, setEditingProduct] = useState(null);
@@ -3005,6 +3253,7 @@
                             <li className={`admin-nav-item ${menu === 'members' ? 'active' : ''}`} onClick={() => setMenu('members')}>회원관리</li>
                             <li className={`admin-nav-item ${menu === 'qna' ? 'active' : ''}`} onClick={() => setMenu('qna')}>Q&A 관리</li>
                             <li className={`admin-nav-item ${menu === 'faq' ? 'active' : ''}`} onClick={() => setMenu('faq')}>FAQ 관리</li>
+                            <li className={`admin-nav-item ${menu === 'popup' ? 'active' : ''}`} onClick={() => setMenu('popup')}>팝업 관리</li>
                             <li className={`admin-nav-item ${menu === 'siteinfo' ? 'active' : ''}`} onClick={() => setMenu('siteinfo')}>안내페이지</li>
                             <li className="admin-nav-item" onClick={() => navigate('home')}>쇼핑몰</li>
                             <li className="admin-nav-item" onClick={logout}>로그아웃</li>
@@ -3018,6 +3267,7 @@
                             menu === 'members' ? '회원관리' :
                             menu === 'qna' ? 'Q&A 관리' :
                             menu === 'faq' ? 'FAQ 관리' :
+                            menu === 'popup' ? '팝업 관리' :
                             menu === 'siteinfo' ? '안내페이지 관리' : ''
                         }</h1></div>
                         <div className="admin-content">
@@ -3165,6 +3415,10 @@
                                 <AdminFaqSection faqs={faqs} addFaq={addFaq} updateFaq={updateFaq} deleteFaq={deleteFaq} />
                             )}
                             
+                            {menu === 'popup' && (
+                                <AdminPopupSection popup={popup} updatePopup={updatePopup} />
+                            )}
+                            
                             {menu === 'siteinfo' && (
                                 <AdminSiteInfoSection siteInfo={siteInfo} updateSiteInfo={updateSiteInfo} />
                             )}
@@ -3203,7 +3457,7 @@
             return (<><Header /><main>{content}</main><Footer /></>);
         };
         
-        const App = () => (<AppProvider><Router /><Toast /><FloatingButtons /></AppProvider>);
+        const App = () => (<AppProvider><Router /><Toast /><FloatingButtons /><PopupModal /></AppProvider>);
         
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
