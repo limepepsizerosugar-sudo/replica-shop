@@ -1606,20 +1606,32 @@
             
             // Image Upload
             const uploadImage = async (file, onProgress) => {
-                const fileName = `${Date.now()}_${file.name}`;
+                const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
                 const storageRef = storage.ref(`products/${fileName}`);
-                const uploadTask = storageRef.put(file);
                 
                 return new Promise((resolve, reject) => {
+                    const uploadTask = storageRef.put(file);
+                    
                     uploadTask.on('state_changed',
                         (snapshot) => {
                             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload progress:', progress);
                             if (onProgress) onProgress(progress);
                         },
-                        (error) => reject(error),
+                        (error) => {
+                            console.error('Upload error:', error.code, error.message);
+                            alert('업로드 실패: ' + error.message);
+                            reject(error);
+                        },
                         async () => {
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            resolve(downloadURL);
+                            try {
+                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                console.log('Upload complete:', downloadURL);
+                                resolve(downloadURL);
+                            } catch (err) {
+                                console.error('getDownloadURL error:', err);
+                                reject(err);
+                            }
                         }
                     );
                 });
@@ -2717,13 +2729,25 @@
             const pendingOrders = orders.filter(o => o.status === 'pending').length;
             
             const handleFileUpload = async (file) => {
-                if (!file || !file.type.startsWith('image/')) return;
+                if (!file || !file.type.startsWith('image/')) {
+                    alert('이미지 파일만 업로드 가능합니다.');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('파일 크기는 5MB 이하여야 합니다.');
+                    return;
+                }
                 setUploading(true);
+                setUploadProgress(0);
                 try {
                     const url = await uploadImage(file, (p) => setUploadProgress(p));
                     setForm({...form, image: url});
-                } catch (e) { console.error(e); }
-                setUploading(false);
+                    setUploading(false);
+                } catch (e) {
+                    console.error('Upload failed:', e);
+                    alert('이미지 업로드에 실패했습니다. Firebase Storage 설정을 확인해주세요.\n\n에러: ' + e.message);
+                    setUploading(false);
+                }
             };
             
             const handleEdit = (product) => {
@@ -2833,19 +2857,30 @@
                                                     <h2>{editingProduct ? '상품 수정' : '상품 등록'}</h2>
                                                     <span className="modal-close" onClick={() => !uploading && setShowModal(false)}>×</span>
                                                 </div>
-                                                <input type="file" ref={fileInputRef} accept="image/*" style={{display:'none'}} onChange={e => handleFileUpload(e.target.files[0])} />
                                                 <div className="form-group">
-                                                    <label className="form-label">상품 이미지 *</label>
-                                                    {form.image ? (
-                                                        <div className="image-preview-container">
-                                                            <img src={form.image} className="image-preview" />
-                                                            {!uploading && <button className="image-preview-remove" onClick={() => setForm({...form, image: ''})}>×</button>}
-                                                            {uploading && <div className="upload-progress"><div className="upload-progress-bar"><div className="upload-progress-fill" style={{width: `${uploadProgress}%`}}></div></div></div>}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="image-upload-area" onClick={() => fileInputRef.current?.click()}>
-                                                            <div style={{fontSize: '36px', marginBottom: '10px'}}>📷</div>
-                                                            <div>클릭하여 이미지 업로드</div>
+                                                    <label className="form-label">상품 이미지 URL *</label>
+                                                    <p style={{fontSize: '12px', color: '#666', marginBottom: '10px', lineHeight: '1.6'}}>
+                                                        💡 <a href="https://imgbb.com" target="_blank" rel="noopener" style={{color: '#1976d2', fontWeight: '600'}}>imgbb.com</a> 에서 이미지 업로드 → "직접 링크" 복사 → 붙여넣기
+                                                    </p>
+                                                    <input 
+                                                        className="form-input" 
+                                                        placeholder="https://i.ibb.co/xxxxx/image.jpg"
+                                                        value={form.image} 
+                                                        onChange={e => setForm({...form, image: e.target.value})} 
+                                                    />
+                                                    {form.image && (
+                                                        <div style={{marginTop: '15px'}}>
+                                                            <p style={{fontSize: '12px', color: '#666', marginBottom: '8px'}}>미리보기:</p>
+                                                            <div className="image-preview-container">
+                                                                <img 
+                                                                    src={form.image} 
+                                                                    className="image-preview" 
+                                                                    onError={(e) => {e.target.style.display = 'none'}}
+                                                                    onLoad={(e) => {e.target.style.display = 'block'}}
+                                                                    style={{display: 'block'}}
+                                                                />
+                                                                <button className="image-preview-remove" onClick={() => setForm({...form, image: ''})}>×</button>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
@@ -2860,7 +2895,7 @@
                                                     <div className="form-group"><label className="form-label">재고</label><input type="number" className="form-input" value={form.stock} onChange={e => setForm({...form, stock: e.target.value})} /></div>
                                                 </div>
                                                 <div className="form-group"><label className="form-label">상품 설명</label><textarea className="form-input" rows="3" value={form.description} onChange={e => setForm({...form, description: e.target.value})}></textarea></div>
-                                                <button className="btn-submit" onClick={handleSubmit} disabled={uploading}>{uploading ? '업로드 중...' : editingProduct ? '수정하기' : '등록하기'}</button>
+                                                <button className="btn-submit" onClick={handleSubmit}>{editingProduct ? '수정하기' : '등록하기'}</button>
                                             </div>
                                         </div>
                                     )}
@@ -2969,4 +3004,3 @@
     </script>
 </body>
 </html>
-
