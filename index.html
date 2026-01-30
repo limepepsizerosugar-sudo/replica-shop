@@ -34,12 +34,26 @@
             --green: #43a047;
         }
         
+        [data-theme="dark"] {
+            --black: #ffffff;
+            --white: #1a1a1a;
+            --gray-50: #222222;
+            --gray-100: #2a2a2a;
+            --gray-200: #333333;
+            --gray-300: #444444;
+            --gray-400: #666666;
+            --gray-500: #888888;
+            --gray-600: #aaaaaa;
+            --gray-700: #cccccc;
+        }
+        
         body { 
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--black);
             background: var(--white);
             line-height: 1.6;
             font-size: 14px;
+            transition: background 0.3s, color 0.3s;
         }
         
         a { text-decoration: none; color: inherit; }
@@ -112,6 +126,11 @@
         
         .floating-btn.telegram {
             background: #0088cc;
+        }
+        
+        .floating-btn.chat {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
         }
         
         .floating-btn svg {
@@ -614,6 +633,113 @@
         }
         .restock-btn:hover { background: var(--gray-200); }
         .restock-btn.active { background: #1976d2; color: var(--white); border-color: #1976d2; }
+        
+        /* Image Zoom */
+        .image-zoom-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000;
+            display: flex; align-items: center; justify-content: center; cursor: zoom-out;
+        }
+        .image-zoom-overlay img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+        .image-zoom-close {
+            position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
+            background: white; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; cursor: pointer;
+        }
+        
+        /* Quick View */
+        .quickview-btn {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 8px 20px; font-size: 12px;
+            opacity: 0; transition: opacity 0.3s; cursor: pointer; border-radius: 4px;
+        }
+        .product-card:hover .quickview-btn { opacity: 1; }
+        .quickview-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 4000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .quickview-content {
+            background: var(--white); max-width: 900px; width: 100%; max-height: 90vh;
+            overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; position: relative;
+        }
+        .quickview-image { aspect-ratio: 3/4; object-fit: cover; width: 100%; }
+        .quickview-info { padding: 30px; }
+        .quickview-close {
+            position: absolute; top: 15px; right: 15px; width: 30px; height: 30px;
+            background: var(--gray-100); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
+        }
+        
+        /* Chat */
+        .chat-button {
+            position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); z-index: 1000;
+        }
+        .chat-button svg { width: 28px; height: 28px; fill: white; }
+        .chat-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--red); color: white;
+            font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .chat-window {
+            position: fixed; bottom: 170px; right: 20px; width: 350px; height: 500px;
+            background: var(--white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 1001; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .chat-header {
+            padding: 15px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; }
+        .chat-message.user { align-self: flex-end; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .chat-message.admin { align-self: flex-start; background: var(--gray-100); color: var(--black); }
+        .chat-input-area { padding: 15px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 10px 15px; border: 1px solid var(--gray-300); border-radius: 20px; font-size: 13px; }
+        .chat-input-area button { padding: 10px 20px; background: var(--black); color: var(--white); border-radius: 20px; font-size: 13px; }
+        
+        /* Roulette */
+        .roulette-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        .roulette-container { background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; }
+        .roulette-wheel {
+            width: 280px; height: 280px; border-radius: 50%; margin: 20px auto; position: relative;
+            background: conic-gradient(#e53935 0deg 45deg, #ffc107 45deg 90deg, #43a047 90deg 135deg, #1976d2 135deg 180deg, #9c27b0 180deg 225deg, #ff5722 225deg 270deg, #00bcd4 270deg 315deg, #8bc34a 315deg 360deg);
+            border: 8px solid #333; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+        .roulette-pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #333; z-index: 1; }
+        .roulette-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: white; border-radius: 50%; border: 4px solid #333; display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; }
+        
+        /* Attendance */
+        .attendance-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; }
+        .attendance-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 8px; font-size: 13px; position: relative; }
+        .attendance-day.checked { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .attendance-day.today { border: 2px solid var(--red); }
+        .attendance-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; margin-top: 20px; cursor: pointer; }
+        .attendance-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
+        
+        /* Address */
+        .address-card { border: 1px solid var(--gray-200); padding: 20px; border-radius: 8px; margin-bottom: 15px; position: relative; }
+        .address-card.default { border-color: var(--black); }
+        .address-default-badge { position: absolute; top: 10px; right: 10px; background: var(--black); color: white; padding: 3px 10px; font-size: 11px; border-radius: 10px; }
+        
+        /* Theme Toggle */
+        .theme-toggle { position: fixed; bottom: 170px; left: 20px; width: 50px; height: 50px; background: var(--gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; font-size: 22px; }
+        
+        /* Time Sale */
+        .timesale-section { background: linear-gradient(135deg, #e53935 0%, #ff6f00 100%); padding: 40px 20px; margin-bottom: 30px; }
+        .timesale-header { text-align: center; color: white; margin-bottom: 30px; }
+        .timesale-title { font-size: 28px; font-weight: 900; margin-bottom: 10px; }
+        .timesale-timer { display: flex; justify-content: center; gap: 10px; }
+        .timer-box { background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; min-width: 60px; text-align: center; }
+        .timer-box .number { font-size: 24px; font-weight: 700; }
+        .timer-box .label { font-size: 10px; opacity: 0.8; }
+        .timesale-products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-width: 1200px; margin: 0 auto; }
+        .timesale-card { background: white; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; }
+        .timesale-badge { position: absolute; top: 10px; left: 10px; background: var(--red); color: white; padding: 4px 10px; font-size: 12px; font-weight: 700; border-radius: 4px; }
+        
+        /* Preorder */
+        .preorder-badge { position: absolute; top: 10px; right: 10px; background: #1976d2; color: white; padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: 4px; }
         
         /* Popup */
         .popup-overlay {
@@ -2049,7 +2175,7 @@
     </script>
     
     <script type="text/babel">
-        const { useState, useEffect, createContext, useContext } = React;
+        const { useState, useEffect, createContext, useContext, useRef } = React;
         
         const AppContext = createContext();
         
@@ -2085,6 +2211,17 @@
             const [notices, setNotices] = useState([]);
             const [events, setEvents] = useState([]);
             const [restockAlerts, setRestockAlerts] = useState([]);
+            const [timeSales, setTimeSales] = useState([]);
+            const [addresses, setAddresses] = useState([]);
+            const [chatMessages, setChatMessages] = useState([]);
+            const [chatOpen, setChatOpen] = useState(false);
+            const [attendance, setAttendance] = useState([]);
+            const [darkMode, setDarkMode] = useState(false);
+            const [quickViewProduct, setQuickViewProduct] = useState(null);
+            const [zoomImage, setZoomImage] = useState(null);
+            const [showRoulette, setShowRoulette] = useState(false);
+            const [rouletteResult, setRouletteResult] = useState(null);
+            const [unreadChat, setUnreadChat] = useState(0);
             
             // 회원 등급 계산
             const getGrade = (totalSpent) => {
@@ -2295,6 +2432,62 @@
                     setRestockAlerts(snap.docs.map(d => d.data().productId));
                 });
                 return () => unsub();
+            }, [user]);
+            
+            // Time Sales
+            useEffect(() => {
+                const unsub = db.collection('timeSales').where('active', '==', true).onSnapshot(snap => {
+                    setTimeSales(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // Addresses
+            useEffect(() => {
+                if (!user) { setAddresses([]); return; }
+                const unsub = db.collection('users').doc(user.uid).collection('addresses').onSnapshot(snap => {
+                    setAddresses(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Chat Messages
+            useEffect(() => {
+                if (!user) { setChatMessages([]); return; }
+                const unsub = db.collection('chats').doc(user.uid).collection('messages').orderBy('createdAt', 'asc').onSnapshot(snap => {
+                    setChatMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                    const unread = snap.docs.filter(d => d.data().from === 'admin' && !d.data().read).length;
+                    setUnreadChat(unread);
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Attendance
+            useEffect(() => {
+                if (!user) { setAttendance([]); return; }
+                const thisMonth = new Date(); thisMonth.setDate(1); thisMonth.setHours(0, 0, 0, 0);
+                const unsub = db.collection('users').doc(user.uid).collection('attendance').where('date', '>=', thisMonth).onSnapshot(snap => {
+                    setAttendance(snap.docs.map(d => d.data().date?.toDate?.()?.getDate?.() || 0).filter(Boolean));
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Dark Mode
+            useEffect(() => {
+                const saved = localStorage.getItem('darkMode');
+                if (saved === 'true') { setDarkMode(true); document.documentElement.setAttribute('data-theme', 'dark'); }
+            }, []);
+            
+            useEffect(() => {
+                if (darkMode) { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('darkMode', 'true'); }
+                else { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('darkMode', 'false'); }
+            }, [darkMode]);
+            
+            // Visit Log
+            useEffect(() => {
+                if (user) {
+                    db.collection('visitLogs').add({ userId: user.uid, userEmail: user.email, visitedAt: firebase.firestore.FieldValue.serverTimestamp(), userAgent: navigator.userAgent });
+                }
             }, [user]);
             
             // Recent Viewed (localStorage)
@@ -2603,6 +2796,97 @@
                 });
             };
             
+            // 배송지 관리 함수
+            const addAddress = async (data) => {
+                if (!user) return;
+                if (data.isDefault) {
+                    const existing = await db.collection('users').doc(user.uid).collection('addresses').where('isDefault', '==', true).get();
+                    existing.forEach(d => d.ref.update({ isDefault: false }));
+                }
+                await db.collection('users').doc(user.uid).collection('addresses').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('배송지가 추가되었습니다', 'success');
+            };
+            const updateAddress = async (id, data) => {
+                if (!user) return;
+                if (data.isDefault) {
+                    const existing = await db.collection('users').doc(user.uid).collection('addresses').where('isDefault', '==', true).get();
+                    existing.forEach(d => { if (d.id !== id) d.ref.update({ isDefault: false }); });
+                }
+                await db.collection('users').doc(user.uid).collection('addresses').doc(id).update(data);
+                showToast('배송지가 수정되었습니다', 'success');
+            };
+            const deleteAddress = async (id) => {
+                if (!user) return;
+                await db.collection('users').doc(user.uid).collection('addresses').doc(id).delete();
+                showToast('배송지가 삭제되었습니다', 'success');
+            };
+            
+            // 채팅 함수
+            const sendChatMessage = async (content) => {
+                if (!user || !content.trim()) return;
+                await db.collection('chats').doc(user.uid).set({ userName: user.name, userEmail: user.email, lastMessage: content, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                await db.collection('chats').doc(user.uid).collection('messages').add({ content, from: 'user', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            };
+            const adminSendChat = async (userId, content) => {
+                if (!content.trim()) return;
+                await db.collection('chats').doc(userId).collection('messages').add({ content, from: 'admin', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                await db.collection('chats').doc(userId).update({ lastMessage: content, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            };
+            
+            // 출석체크 함수
+            const checkAttendance = async () => {
+                if (!user) return;
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const existing = await db.collection('users').doc(user.uid).collection('attendance').where('date', '==', today).get();
+                if (!existing.empty) { showToast('이미 출석체크를 하셨습니다', 'error'); return; }
+                await db.collection('users').doc(user.uid).collection('attendance').add({ date: today, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                const points = 50;
+                await db.collection('users').doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(points) });
+                await db.collection('users').doc(user.uid).collection('pointsHistory').add({ amount: points, type: 'earn', desc: '출석체크 적립', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                setUserPoints(prev => prev + points);
+                showToast(`출석체크 완료! ${points}P 적립!`, 'success');
+            };
+            
+            // 룰렛 함수
+            const spinRoulette = async () => {
+                if (!user) return null;
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const lastSpin = localStorage.getItem(`roulette_${user.uid}`);
+                if (lastSpin === today.toDateString()) { showToast('오늘은 이미 룰렛을 돌렸습니다', 'error'); return null; }
+                const rewards = [100, 200, 300, 500, 1000, 50, 150, 0];
+                const result = rewards[Math.floor(Math.random() * rewards.length)];
+                if (result > 0) {
+                    await db.collection('users').doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(result) });
+                    await db.collection('users').doc(user.uid).collection('pointsHistory').add({ amount: result, type: 'earn', desc: '룰렛 이벤트 당첨', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    setUserPoints(prev => prev + result);
+                }
+                localStorage.setItem(`roulette_${user.uid}`, today.toDateString());
+                return result;
+            };
+            
+            // 타임세일 관리 함수
+            const addTimeSale = async (data) => {
+                await db.collection('timeSales').add({ ...data, active: true, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('타임세일이 등록되었습니다', 'success');
+            };
+            const deleteTimeSale = async (id) => {
+                await db.collection('timeSales').doc(id).delete();
+                showToast('삭제되었습니다', 'success');
+            };
+            
+            // 포토리뷰 추가 적립
+            const addReviewWithPhoto = async (data) => {
+                const hasPhoto = data.photos && data.photos.length > 0;
+                const basePoints = 100;
+                const photoBonus = hasPhoto ? 200 : 0;
+                const totalPoints = basePoints + photoBonus;
+                await db.collection('reviews').add({ ...data, userId: user.uid, userName: user.name, hasPhoto, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                await db.collection('users').doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(totalPoints) });
+                await db.collection('users').doc(user.uid).collection('pointsHistory').add({ amount: totalPoints, type: 'earn', desc: hasPhoto ? '포토리뷰 적립' : '리뷰 적립', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                setUserPoints(prev => prev + totalPoints);
+                showToast(`리뷰 등록 완료! ${totalPoints}P 적립!`, 'success');
+            };
+            
             // 검색 함수
             const searchProducts = (keyword) => {
                 if (!keyword) return products;
@@ -2637,7 +2921,16 @@
                     notices, addNotice, deleteNotice,
                     events, addEvent, deleteEvent,
                     restockAlerts, toggleRestockAlert,
-                    getGrade
+                    getGrade,
+                    timeSales, addTimeSale, deleteTimeSale,
+                    addresses, addAddress, updateAddress, deleteAddress,
+                    chatMessages, chatOpen, setChatOpen, sendChatMessage, adminSendChat, unreadChat,
+                    attendance, checkAttendance,
+                    darkMode, setDarkMode,
+                    quickViewProduct, setQuickViewProduct,
+                    zoomImage, setZoomImage,
+                    showRoulette, setShowRoulette, spinRoulette, rouletteResult, setRouletteResult,
+                    addReviewWithPhoto
                 }}>
                     {children}
                 </AppContext.Provider>
@@ -2652,21 +2945,425 @@
             return <div className={`toast ${toast.type}`}>{toast.message}</div>;
         };
         
+        // 이미지 줌 컴포넌트
+        const ImageZoom = () => {
+            const { zoomImage, setZoomImage } = useApp();
+            if (!zoomImage) return null;
+            return (
+                <div className="image-zoom-overlay" onClick={() => setZoomImage(null)}>
+                    <div className="image-zoom-close">×</div>
+                    <img src={zoomImage} alt="" />
+                </div>
+            );
+        };
+        
+        // 퀵뷰 컴포넌트
+        const QuickView = () => {
+            const { quickViewProduct, setQuickViewProduct, addToCart, toggleWishlist, wishlist, navigate } = useApp();
+            const [selectedColor, setSelectedColor] = useState('');
+            const [selectedSize, setSelectedSize] = useState('');
+            if (!quickViewProduct) return null;
+            const p = quickViewProduct;
+            const colors = p.colors?.split(',').map(c => c.trim()).filter(Boolean) || [];
+            const sizes = p.sizes?.split(',').map(s => s.trim()).filter(Boolean) || [];
+            const isWished = wishlist.includes(p.id);
+            return (
+                <div className="quickview-modal" onClick={() => setQuickViewProduct(null)}>
+                    <div className="quickview-content" onClick={e => e.stopPropagation()}>
+                        <div className="quickview-close" onClick={() => setQuickViewProduct(null)}>×</div>
+                        <img src={p.image} alt="" className="quickview-image" />
+                        <div className="quickview-info">
+                            <p style={{color:'var(--gray-500)',marginBottom:'5px'}}>{p.brand}</p>
+                            <h2 style={{fontSize:'18px',marginBottom:'15px'}}>{p.name}</h2>
+                            {p.salePrice ? (
+                                <div style={{marginBottom:'20px'}}><span style={{textDecoration:'line-through',color:'var(--gray-400)',marginRight:'10px'}}>₩{Number(p.price).toLocaleString()}</span><span style={{fontSize:'20px',fontWeight:'700',color:'var(--red)'}}>₩{Number(p.salePrice).toLocaleString()}</span></div>
+                            ) : (<p style={{fontSize:'20px',fontWeight:'700',marginBottom:'20px'}}>₩{Number(p.price).toLocaleString()}</p>)}
+                            {colors.length > 0 && (<div style={{marginBottom:'15px'}}><p style={{fontSize:'13px',marginBottom:'8px'}}>색상</p><div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>{colors.map(c => (<button key={c} style={{padding:'8px 16px',border: selectedColor === c ? '2px solid var(--black)' : '1px solid var(--gray-300)',background:'var(--white)',fontSize:'12px'}} onClick={() => setSelectedColor(c)}>{c}</button>))}</div></div>)}
+                            {sizes.length > 0 && (<div style={{marginBottom:'20px'}}><p style={{fontSize:'13px',marginBottom:'8px'}}>사이즈</p><div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>{sizes.map(s => (<button key={s} style={{padding:'8px 16px',border: selectedSize === s ? '2px solid var(--black)' : '1px solid var(--gray-300)',background:'var(--white)',fontSize:'12px'}} onClick={() => setSelectedSize(s)}>{s}</button>))}</div></div>)}
+                            <div style={{display:'flex',gap:'10px'}}><button style={{flex:1,padding:'12px',background:'var(--black)',color:'white',fontSize:'14px'}} onClick={() => { addToCart({...p, selectedColor, selectedSize}); setQuickViewProduct(null); }}>장바구니</button><button style={{padding:'12px 20px',border:'1px solid var(--gray-300)',background:'white'}} onClick={() => toggleWishlist(p.id)}>{isWished ? '♥' : '♡'}</button></div>
+                            <button style={{width:'100%',marginTop:'10px',padding:'12px',border:'1px solid var(--black)',background:'white',fontSize:'13px'}} onClick={() => { setQuickViewProduct(null); navigate('detail', p); }}>상세 보기</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 채팅 위젯
+        const ChatWidget = () => {
+            const { user, chatOpen, setChatOpen, chatMessages, sendChatMessage } = useApp();
+            const [input, setInput] = useState('');
+            const messagesEndRef = useRef(null);
+            useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages]);
+            const handleSend = () => { if (input.trim()) { sendChatMessage(input); setInput(''); } };
+            if (!user || !chatOpen) return null;
+            return (
+                <div className="chat-window">
+                    <div className="chat-header"><h3 style={{fontSize:'15px'}}>1:1 문의</h3><span style={{cursor:'pointer',fontSize:'20px'}} onClick={() => setChatOpen(false)}>×</span></div>
+                    <div className="chat-messages">
+                        {chatMessages.length === 0 && <p style={{textAlign:'center',color:'var(--gray-400)',fontSize:'13px'}}>궁금한 점을 물어보세요!</p>}
+                        {chatMessages.map(msg => (<div key={msg.id} className={`chat-message ${msg.from}`}>{msg.content}</div>))}
+                        <div ref={messagesEndRef} />
+                    </div>
+                    <div className="chat-input-area">
+                        <input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="메시지 입력..." />
+                        <button onClick={handleSend}>전송</button>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 룰렛 모달
+        const RouletteModal = () => {
+            const { showRoulette, setShowRoulette, spinRoulette, rouletteResult, setRouletteResult, user } = useApp();
+            const [spinning, setSpinning] = useState(false);
+            const [rotation, setRotation] = useState(0);
+            if (!showRoulette || !user) return null;
+            const handleSpin = async () => {
+                if (spinning) return;
+                setSpinning(true); setRouletteResult(null);
+                const result = await spinRoulette();
+                if (result === null) { setSpinning(false); return; }
+                const newRotation = rotation + 360 * 5 + Math.random() * 360;
+                setRotation(newRotation);
+                setTimeout(() => { setSpinning(false); setRouletteResult(result); }, 4000);
+            };
+            return (
+                <div className="roulette-overlay" onClick={() => !spinning && setShowRoulette(false)}>
+                    <div className="roulette-container" onClick={e => e.stopPropagation()}>
+                        <h2 style={{fontSize:'24px',fontWeight:'700',marginBottom:'10px'}}>🎰 행운의 룰렛</h2>
+                        <p style={{color:'var(--gray-500)',fontSize:'13px'}}>하루에 한 번 도전하세요!</p>
+                        <div style={{position:'relative',display:'inline-block'}}>
+                            <div className="roulette-pointer"></div>
+                            <div className="roulette-wheel" style={{transform: `rotate(${rotation}deg)`}}>
+                                <div className="roulette-center" onClick={handleSpin}>{spinning ? '...' : 'SPIN'}</div>
+                            </div>
+                        </div>
+                        {rouletteResult !== null && (
+                            <div style={{marginTop:'20px',padding:'20px',background:'var(--gray-50)',borderRadius:'10px'}}>
+                                {rouletteResult > 0 ? (<><p style={{fontSize:'18px',fontWeight:'700',color:'var(--red)'}}>🎉 축하합니다!</p><p style={{fontSize:'28px',fontWeight:'700',margin:'10px 0'}}>{rouletteResult}P</p></>) : (<p style={{fontSize:'18px',fontWeight:'700'}}>😢 다음에 다시!</p>)}
+                            </div>
+                        )}
+                        <button style={{marginTop:'20px',padding:'10px 30px',background:'var(--gray-200)',border:'none',cursor:'pointer',borderRadius:'4px'}} onClick={() => setShowRoulette(false)}>닫기</button>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 다크모드 토글
+        const ThemeToggle = () => {
+            const { darkMode, setDarkMode, currentPage } = useApp();
+            if (currentPage === 'admin') return null;
+            return <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>{darkMode ? '☀️' : '🌙'}</div>;
+        };
+        
+        // 포인트 페이지 (출석체크, 룰렛, 포토리뷰 통합)
+        const PointPage = () => {
+            const { user, navigate, setShowRoulette, attendance, checkAttendance, userPoints } = useApp();
+            const today = new Date().getDate();
+            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            const todayChecked = attendance.includes(today);
+            
+            if (!user) return <div className="cs-page"><div className="cs-header"><h1>포인트</h1></div><div className="cs-content"><div className="empty-state"><h3>로그인이 필요합니다</h3><button className="btn-buy" style={{marginTop:'20px'}} onClick={() => navigate('login')}>로그인</button></div></div></div>;
+            
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>🎁 포인트</h1><p>다양한 방법으로 포인트를 적립하세요!</p></div>
+                    <div className="cs-content" style={{maxWidth:'800px',margin:'0 auto'}}>
+                        {/* 내 포인트 */}
+                        <div style={{background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',padding:'30px',borderRadius:'12px',color:'white',marginBottom:'30px',textAlign:'center'}}>
+                            <p style={{fontSize:'14px',opacity:0.9,marginBottom:'5px'}}>내 포인트</p>
+                            <p style={{fontSize:'42px',fontWeight:'700'}}>{userPoints?.toLocaleString() || 0}P</p>
+                        </div>
+                        
+                        {/* 포인트 적립 방법 */}
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:'20px',marginBottom:'40px'}}>
+                            <div style={{background:'var(--gray-50)',padding:'25px',borderRadius:'12px',textAlign:'center',cursor:'pointer'}} onClick={checkAttendance}>
+                                <div style={{fontSize:'40px',marginBottom:'10px'}}>📅</div>
+                                <h3 style={{fontSize:'16px',marginBottom:'8px'}}>출석체크</h3>
+                                <p style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'15px'}}>매일 출석하고 50P</p>
+                                <button className={`attendance-btn ${todayChecked ? '' : ''}`} style={{padding:'10px 20px',fontSize:'13px'}} disabled={todayChecked}>{todayChecked ? '완료!' : '출석하기'}</button>
+                            </div>
+                            <div style={{background:'var(--gray-50)',padding:'25px',borderRadius:'12px',textAlign:'center',cursor:'pointer'}} onClick={() => setShowRoulette(true)}>
+                                <div style={{fontSize:'40px',marginBottom:'10px'}}>🎰</div>
+                                <h3 style={{fontSize:'16px',marginBottom:'8px'}}>행운의 룰렛</h3>
+                                <p style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'15px'}}>최대 1,000P 당첨</p>
+                                <button style={{padding:'10px 20px',background:'var(--black)',color:'white',borderRadius:'8px',fontSize:'13px'}}>도전하기</button>
+                            </div>
+                            <div style={{background:'var(--gray-50)',padding:'25px',borderRadius:'12px',textAlign:'center',cursor:'pointer'}} onClick={() => navigate('review')}>
+                                <div style={{fontSize:'40px',marginBottom:'10px'}}>📸</div>
+                                <h3 style={{fontSize:'16px',marginBottom:'8px'}}>포토리뷰</h3>
+                                <p style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'15px'}}>사진 리뷰 작성 시 300P</p>
+                                <button style={{padding:'10px 20px',background:'var(--black)',color:'white',borderRadius:'8px',fontSize:'13px'}}>리뷰 쓰기</button>
+                            </div>
+                        </div>
+                        
+                        {/* 출석 캘린더 */}
+                        <div style={{background:'white',border:'1px solid var(--gray-200)',borderRadius:'12px',padding:'25px'}}>
+                            <h3 style={{fontSize:'16px',marginBottom:'20px'}}>📆 이번 달 출석 현황 ({attendance.length}일)</h3>
+                            <div className="attendance-calendar">
+                                {['일','월','화','수','목','금','토'].map(d => <div key={d} style={{textAlign:'center',fontWeight:'600',fontSize:'12px',color:'var(--gray-500)'}}>{d}</div>)}
+                                {Array.from({length: new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay()}, (_, i) => <div key={`e-${i}`}></div>)}
+                                {Array.from({length: daysInMonth}, (_, i) => {
+                                    const day = i + 1;
+                                    const checked = attendance.includes(day);
+                                    return <div key={day} className={`attendance-day ${checked ? 'checked' : ''} ${day === today ? 'today' : ''}`}>{day}{checked && <span style={{position:'absolute',bottom:'2px',fontSize:'10px'}}>✓</span>}</div>;
+                                })}
+                            </div>
+                        </div>
+                        
+                        {/* 포인트 안내 */}
+                        <div style={{marginTop:'30px',padding:'20px',background:'var(--gray-50)',borderRadius:'8px'}}>
+                            <h4 style={{marginBottom:'15px'}}>💡 포인트 적립 안내</h4>
+                            <ul style={{fontSize:'13px',color:'var(--gray-600)',lineHeight:'2'}}>
+                                <li>• 출석체크: 매일 1회 50P</li>
+                                <li>• 행운의 룰렛: 매일 1회 (0~1,000P)</li>
+                                <li>• 일반 리뷰: 100P</li>
+                                <li>• 포토 리뷰: 300P</li>
+                                <li>• 상품 구매 확정 시: 등급별 1~5% 적립</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 출석체크 페이지
+        const AttendancePage = () => {
+            const { user, attendance, checkAttendance, navigate } = useApp();
+            const today = new Date().getDate();
+            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            const todayChecked = attendance.includes(today);
+            if (!user) return <div className="cs-page"><div className="cs-header"><h1>출석체크</h1></div><div className="cs-content"><div className="empty-state"><h3>로그인이 필요합니다</h3><button className="btn-buy" style={{marginTop:'20px'}} onClick={() => navigate('login')}>로그인</button></div></div></div>;
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>📅 출석체크</h1><p>매일 출석체크하고 50P 받아가세요!</p></div>
+                    <div className="cs-content" style={{maxWidth:'500px',margin:'0 auto'}}>
+                        <div style={{background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',padding:'25px',borderRadius:'12px',color:'white',marginBottom:'30px',textAlign:'center'}}>
+                            <p style={{fontSize:'14px',opacity:0.9,marginBottom:'5px'}}>이번 달 출석</p>
+                            <p style={{fontSize:'36px',fontWeight:'700'}}>{attendance.length}일</p>
+                        </div>
+                        <div className="attendance-calendar">
+                            {['일','월','화','수','목','금','토'].map(d => <div key={d} style={{textAlign:'center',fontWeight:'600',fontSize:'12px',color:'var(--gray-500)'}}>{d}</div>)}
+                            {Array.from({length: new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay()}, (_, i) => <div key={`e-${i}`}></div>)}
+                            {Array.from({length: daysInMonth}, (_, i) => {
+                                const day = i + 1;
+                                const checked = attendance.includes(day);
+                                return <div key={day} className={`attendance-day ${checked ? 'checked' : ''} ${day === today ? 'today' : ''}`}>{day}{checked && <span style={{position:'absolute',bottom:'2px',fontSize:'10px'}}>✓</span>}</div>;
+                            })}
+                        </div>
+                        <button className="attendance-btn" onClick={checkAttendance} disabled={todayChecked}>{todayChecked ? '오늘 출석 완료!' : '출석체크 하기'}</button>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 배송지 관리 페이지
+        const AddressPage = () => {
+            const { user, addresses, addAddress, updateAddress, deleteAddress, navigate } = useApp();
+            const [showModal, setShowModal] = useState(false);
+            const [editingAddress, setEditingAddress] = useState(null);
+            const [form, setForm] = useState({ name: '', phone: '', address: '', detail: '', isDefault: false });
+            if (!user) return <div className="cs-page"><div className="cs-header"><h1>배송지 관리</h1></div><div className="cs-content"><div className="empty-state"><h3>로그인이 필요합니다</h3><button className="btn-buy" style={{marginTop:'20px'}} onClick={() => navigate('login')}>로그인</button></div></div></div>;
+            const handleNew = () => { setEditingAddress(null); setForm({ name: '', phone: '', address: '', detail: '', isDefault: false }); setShowModal(true); };
+            const handleEdit = (addr) => { setEditingAddress(addr); setForm({ name: addr.name, phone: addr.phone, address: addr.address, detail: addr.detail || '', isDefault: addr.isDefault }); setShowModal(true); };
+            const handleSubmit = async () => { if (!form.name || !form.phone || !form.address) { alert('필수항목을 입력해주세요'); return; } if (editingAddress) await updateAddress(editingAddress.id, form); else await addAddress(form); setShowModal(false); };
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>배송지 관리</h1></div>
+                    <div className="cs-content" style={{maxWidth:'600px'}}>
+                        <button className="btn-submit" style={{marginBottom:'20px'}} onClick={handleNew}>+ 새 배송지 추가</button>
+                        {addresses.length === 0 ? <div className="empty-state"><h3>등록된 배송지가 없습니다</h3></div> : addresses.map(addr => (
+                            <div key={addr.id} className={`address-card ${addr.isDefault ? 'default' : ''}`}>
+                                {addr.isDefault && <span className="address-default-badge">기본 배송지</span>}
+                                <div style={{fontWeight:'600',marginBottom:'5px'}}>{addr.name}</div>
+                                <div style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'8px'}}>{addr.phone}</div>
+                                <div style={{fontSize:'14px'}}>{addr.address} {addr.detail}</div>
+                                <div style={{marginTop:'15px',display:'flex',gap:'10px'}}>
+                                    <button className="btn-admin btn-admin-secondary" onClick={() => handleEdit(addr)}>수정</button>
+                                    {!addr.isDefault && <button className="btn-admin btn-admin-secondary" onClick={() => updateAddress(addr.id, { isDefault: true })}>기본 설정</button>}
+                                    <button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteAddress(addr.id); }}>삭제</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header"><h2>{editingAddress ? '배송지 수정' : '배송지 추가'}</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                                <div className="form-group"><label className="form-label">받는 분 *</label><input className="form-input" value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">연락처 *</label><input className="form-input" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">주소 *</label><input className="form-input" value={form.address} onChange={e => setForm({...form, address: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">상세주소</label><input className="form-input" value={form.detail} onChange={e => setForm({...form, detail: e.target.value})} /></div>
+                                <div className="form-group"><label><input type="checkbox" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} /> 기본 배송지로 설정</label></div>
+                                <button className="btn-submit" onClick={handleSubmit}>{editingAddress ? '수정' : '추가'}</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        // 관리자 타임세일 관리
+        const AdminTimeSaleSection = ({ timeSales, addTimeSale, deleteTimeSale, products }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ title: '', discount: '', endTime: '', productIds: [] });
+            const handleSubmit = async () => { if (!form.title || !form.discount || !form.endTime) { alert('필수항목을 입력해주세요'); return; } await addTimeSale({ title: form.title, discount: Number(form.discount), endTime: new Date(form.endTime), productIds: form.productIds }); setShowModal(false); setForm({ title: '', discount: '', endTime: '', productIds: [] }); };
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>타임세일 ({timeSales.length})</h2><button className="btn-admin btn-admin-primary" onClick={() => setShowModal(true)}>+ 등록</button></div>
+                    <table className="admin-table"><thead><tr><th>제목</th><th>할인율</th><th>종료시간</th><th>상품수</th><th>관리</th></tr></thead><tbody>{timeSales.map(s => (<tr key={s.id}><td>{s.title}</td><td>{s.discount}%</td><td>{s.endTime?.toDate?.().toLocaleString() || '-'}</td><td>{s.productIds?.length || 0}</td><td><button className="btn-admin btn-admin-danger" onClick={() => deleteTimeSale(s.id)}>삭제</button></td></tr>))}</tbody></table>
+                    {showModal && <div className="modal-overlay" onClick={() => setShowModal(false)}><div className="modal" onClick={e => e.stopPropagation()}><div className="modal-header"><h2>타임세일 등록</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div><div className="form-group"><label className="form-label">제목 *</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div><div className="form-group"><label className="form-label">할인율 (%) *</label><input type="number" className="form-input" value={form.discount} onChange={e => setForm({...form, discount: e.target.value})} /></div><div className="form-group"><label className="form-label">종료시간 *</label><input type="datetime-local" className="form-input" value={form.endTime} onChange={e => setForm({...form, endTime: e.target.value})} /></div><div className="form-group"><label className="form-label">상품 선택</label><select multiple className="form-input" style={{height:'150px'}} value={form.productIds} onChange={e => setForm({...form, productIds: Array.from(e.target.selectedOptions, o => o.value)})}>{products.map(p => <option key={p.id} value={p.id}>{p.brand} - {p.name}</option>)}</select></div><button className="btn-submit" onClick={handleSubmit}>등록</button></div></div>}
+                </div>
+            );
+        };
+        
+        // 관리자 채팅 관리
+        const AdminChatSection = ({ adminSendChat }) => {
+            const [chats, setChats] = useState([]);
+            const [selectedChat, setSelectedChat] = useState(null);
+            const [messages, setMessages] = useState([]);
+            const [input, setInput] = useState('');
+            useEffect(() => { const unsub = db.collection('chats').orderBy('updatedAt', 'desc').onSnapshot(snap => { setChats(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); return () => unsub(); }, []);
+            useEffect(() => { if (!selectedChat) return; const unsub = db.collection('chats').doc(selectedChat.id).collection('messages').orderBy('createdAt', 'asc').onSnapshot(snap => { setMessages(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); return () => unsub(); }, [selectedChat]);
+            const handleSend = () => { if (!input.trim() || !selectedChat) return; adminSendChat(selectedChat.id, input); setInput(''); };
+            return (
+                <div style={{display:'grid',gridTemplateColumns:'300px 1fr',gap:'20px',height:'500px'}}>
+                    <div className="admin-table-wrap" style={{overflow:'auto'}}><div className="admin-table-header"><h2>채팅 목록</h2></div>{chats.map(c => (<div key={c.id} style={{padding:'15px',borderBottom:'1px solid var(--gray-200)',cursor:'pointer',background: selectedChat?.id === c.id ? 'var(--gray-100)' : 'white'}} onClick={() => setSelectedChat(c)}><p style={{fontWeight:'600'}}>{c.userName}</p><p style={{fontSize:'12px',color:'var(--gray-500)'}}>{c.lastMessage?.slice(0,30)}...</p></div>))}</div>
+                    <div className="admin-table-wrap" style={{display:'flex',flexDirection:'column'}}><div className="admin-table-header"><h2>{selectedChat ? selectedChat.userName : '채팅 선택'}</h2></div><div style={{flex:1,padding:'15px',overflow:'auto',display:'flex',flexDirection:'column',gap:'10px'}}>{messages.map(msg => (<div key={msg.id} className={`chat-message ${msg.from}`}>{msg.content}</div>))}</div>{selectedChat && (<div style={{padding:'15px',borderTop:'1px solid var(--gray-200)',display:'flex',gap:'10px'}}><input style={{flex:1,padding:'10px',border:'1px solid var(--gray-300)'}} value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} /><button className="btn-admin btn-admin-primary" onClick={handleSend}>전송</button></div>)}</div>
+                </div>
+            );
+        };
+        
+        // 관리자 접속 로그
+        const AdminVisitLogSection = () => {
+            const [logs, setLogs] = useState([]);
+            const [stats, setStats] = useState({ today: 0, week: 0, month: 0 });
+            useEffect(() => {
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const unsub = db.collection('visitLogs').orderBy('visitedAt', 'desc').limit(100).onSnapshot(snap => {
+                    const allLogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    setLogs(allLogs);
+                    const todayCount = allLogs.filter(l => l.visitedAt?.toDate?.() >= today).length;
+                    const weekAgo = new Date(today); weekAgo.setDate(weekAgo.getDate() - 7);
+                    const weekCount = allLogs.filter(l => l.visitedAt?.toDate?.() >= weekAgo).length;
+                    setStats({ today: todayCount, week: weekCount, month: allLogs.length });
+                });
+                return () => unsub();
+            }, []);
+            return (
+                <>
+                    <div className="admin-stats" style={{marginBottom:'20px'}}><div className="stat-card"><h3>오늘 방문</h3><div className="value">{stats.today}</div></div><div className="stat-card"><h3>최근 7일</h3><div className="value">{stats.week}</div></div><div className="stat-card"><h3>총 기록</h3><div className="value">{stats.month}</div></div></div>
+                    <div className="admin-table-wrap"><div className="admin-table-header"><h2>최근 접속 로그</h2></div><table className="admin-table"><thead><tr><th>이메일</th><th>접속시간</th></tr></thead><tbody>{logs.slice(0, 30).map(l => (<tr key={l.id}><td>{l.userEmail}</td><td>{l.visitedAt?.toDate?.().toLocaleString() || '-'}</td></tr>))}</tbody></table></div>
+                </>
+            );
+        };
+        
+        // 관리자 포인트 설정 및 로그
+        const AdminPointSection = () => {
+            const [pointSettings, setPointSettings] = useState({ attendance: 50, roulette_max: 1000, review_normal: 100, review_photo: 300 });
+            const [pointLogs, setPointLogs] = useState([]);
+            const [stats, setStats] = useState({ totalGiven: 0, todayGiven: 0 });
+            
+            useEffect(() => {
+                // 포인트 설정 불러오기
+                db.collection('settings').doc('points').get().then(doc => {
+                    if (doc.exists) setPointSettings(doc.data());
+                });
+                // 포인트 로그 불러오기 (모든 사용자의 pointsHistory)
+                db.collectionGroup('pointsHistory').orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+                    const logs = snap.docs.map(d => ({ id: d.id, ...d.data(), parentId: d.ref.parent.parent.id }));
+                    setPointLogs(logs);
+                    const today = new Date(); today.setHours(0, 0, 0, 0);
+                    const todayLogs = logs.filter(l => l.createdAt?.toDate?.() >= today && l.type === 'earn');
+                    const totalGiven = logs.filter(l => l.type === 'earn').reduce((sum, l) => sum + (l.amount || 0), 0);
+                    const todayGiven = todayLogs.reduce((sum, l) => sum + (l.amount || 0), 0);
+                    setStats({ totalGiven, todayGiven });
+                });
+            }, []);
+            
+            const saveSettings = async () => {
+                await db.collection('settings').doc('points').set(pointSettings);
+                alert('설정이 저장되었습니다');
+            };
+            
+            return (
+                <>
+                    <div className="admin-stats" style={{marginBottom:'20px'}}>
+                        <div className="stat-card"><h3>오늘 지급</h3><div className="value">{stats.todayGiven.toLocaleString()}P</div></div>
+                        <div className="stat-card"><h3>총 지급</h3><div className="value">{stats.totalGiven.toLocaleString()}P</div></div>
+                    </div>
+                    
+                    <div className="admin-table-wrap" style={{marginBottom:'20px'}}>
+                        <div className="admin-table-header"><h2>포인트 설정</h2></div>
+                        <div style={{padding:'20px',display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:'20px'}}>
+                            <div className="form-group">
+                                <label className="form-label">출석체크 포인트</label>
+                                <input type="number" className="form-input" value={pointSettings.attendance} onChange={e => setPointSettings({...pointSettings, attendance: Number(e.target.value)})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">룰렛 최대 포인트</label>
+                                <input type="number" className="form-input" value={pointSettings.roulette_max} onChange={e => setPointSettings({...pointSettings, roulette_max: Number(e.target.value)})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">일반 리뷰 포인트</label>
+                                <input type="number" className="form-input" value={pointSettings.review_normal} onChange={e => setPointSettings({...pointSettings, review_normal: Number(e.target.value)})} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">포토리뷰 포인트</label>
+                                <input type="number" className="form-input" value={pointSettings.review_photo} onChange={e => setPointSettings({...pointSettings, review_photo: Number(e.target.value)})} />
+                            </div>
+                        </div>
+                        <div style={{padding:'0 20px 20px'}}><button className="btn-admin btn-admin-primary" onClick={saveSettings}>설정 저장</button></div>
+                    </div>
+                    
+                    <div className="admin-table-wrap">
+                        <div className="admin-table-header"><h2>포인트 지급 로그</h2></div>
+                        <table className="admin-table">
+                            <thead><tr><th>회원ID</th><th>내용</th><th>포인트</th><th>유형</th><th>일시</th></tr></thead>
+                            <tbody>
+                                {pointLogs.slice(0, 50).map(l => (
+                                    <tr key={l.id}>
+                                        <td style={{fontSize:'12px'}}>{l.parentId?.slice(0,8)}...</td>
+                                        <td>{l.desc}</td>
+                                        <td style={{color: l.type === 'earn' ? 'var(--green)' : 'var(--red)'}}>{l.type === 'earn' ? '+' : '-'}{l.amount}P</td>
+                                        <td>{l.type === 'earn' ? '적립' : '사용'}</td>
+                                        <td>{l.createdAt?.toDate?.().toLocaleString() || '-'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            );
+        };
+        
         const FloatingButtons = () => {
+            const { user, chatOpen, setChatOpen, unreadChat } = useApp();
             // 여기에 실제 카카오톡 채널/텔레그램 링크를 입력하세요
             const kakaoLink = 'https://pf.kakao.com/_xYourID'; // 카카오톡 채널 링크
             const telegramLink = 'https://t.me/YourUsername'; // 텔레그램 링크
             
             return (
                 <div className="floating-btns">
+                    {/* 1:1 채팅 */}
+                    {user && (
+                        <div className="floating-btn chat" title="1:1 채팅" onClick={() => setChatOpen(!chatOpen)} style={{background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',position:'relative'}}>
+                            <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.5 3.37 1.35 4.76L2 22l5.24-1.35C8.63 21.5 10.26 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.58 0-3.07-.46-4.32-1.24l-.31-.18-3.19.82.84-3.07-.2-.32A7.96 7.96 0 014 12c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8z"/>
+                            </svg>
+                            {unreadChat > 0 && <span style={{position:'absolute',top:'-5px',right:'-5px',background:'#e53935',color:'white',fontSize:'11px',minWidth:'20px',height:'20px',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center'}}>{unreadChat}</span>}
+                        </div>
+                    )}
+                    {/* 텔레그램 */}
                     <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="floating-btn telegram" title="텔레그램 문의">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
                         </svg>
                     </a>
+                    {/* 카카오톡 */}
                     <a href={kakaoLink} target="_blank" rel="noopener noreferrer" className="floating-btn kakao" title="카카오톡 문의">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3zm5.907 8.06l1.47-1.424a.472.472 0 0 0-.656-.678l-1.928 1.866V9.282a.472.472 0 0 0-.944 0v2.557a.471.471 0 0 0 0 .222V13.5a.472.472 0 0 0 .944 0v-1.363l.427-.413 1.428 2.033a.472.472 0 1 0 .773-.543l-1.514-2.155zm-2.958 1.924h-1.46V9.297a.472.472 0 0 0-.943 0v4.159c0 .26.21.472.471.472h1.932a.472.472 0 1 0 0-.944zm-5.857-1.092l.696-1.707.638 1.707H9.092zm2.523.488l.002-.016a.469.469 0 0 0-.127-.32l-1.046-2.8a.69.69 0 0 0-.627-.474.696.696 0 0 0-.653.447l-1.661 4.075a.472.472 0 0 0 .874.357l.33-.813h2.07l.299.8a.472.472 0 1 0 .884-.33l-.345-.926zm-7.086 1.028l1.078-1.353-1.108-1.39a.472.472 0 1 1 .738-.587l.755.948.73-.947a.472.472 0 1 1 .746.576l-1.093 1.416 1.108 1.389a.472.472 0 0 1-.37.765.47.47 0 0 1-.369-.177l-.772-.97-.77.97a.472.472 0 0 1-.673-.64z"/>
+                        <svg viewBox="0 0 24 24" fill="#3C1E1E" width="24" height="24">
+                            <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
                         </svg>
                     </a>
                 </div>
@@ -2737,7 +3434,7 @@
         );
         
         const Header = () => {
-            const { user, cart, wishlist, navigate, currentPage, isAdmin, setSearchKeyword, userPoints, getGrade } = useApp();
+            const { user, cart, wishlist, navigate, currentPage, isAdmin, setSearchKeyword, userPoints, getGrade, darkMode, setDarkMode } = useApp();
             const [localSearch, setLocalSearch] = useState('');
             
             const navItems = [
@@ -2746,6 +3443,7 @@
                 { id: 'clothing', label: '의류' },
                 { id: 'shoes', label: '신발' },
                 { id: 'bags', label: '가방' },
+                { id: 'point', label: '포인트' },
             ];
             
             const handleSearch = () => {
@@ -2767,6 +3465,7 @@
                             <button onClick={handleSearch}>🔍</button>
                         </div>
                         <nav className="nav-menu">
+                            <span className="nav-link" onClick={() => setDarkMode(!darkMode)} title={darkMode ? '라이트모드' : '다크모드'} style={{cursor:'pointer',fontSize:'18px'}}>{darkMode ? '☀️' : '🌙'}</span>
                             {navItems.map(item => (
                                 <span key={item.id} className={`nav-link ${currentPage === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>{item.label}</span>
                             ))}
@@ -2865,15 +3564,20 @@
         };
         
         const ProductCard = ({ product }) => {
-            const { navigate, wishlist, toggleWishlist } = useApp();
+            const { navigate, wishlist, toggleWishlist, setQuickViewProduct } = useApp();
             const isWished = wishlist.includes(product.id);
             const discount = product.salePrice ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
+            const isOutOfStock = product.stock === 0;
+            const isPreorder = product.preorder;
             
             return (
                 <div className="product-card">
                     <div className="product-image" onClick={() => navigate('detail', product)}>
                         <img src={product.image} alt={product.name} />
                         {discount > 0 && <span className="product-badge">{discount}%</span>}
+                        {isOutOfStock && <span className="product-badge" style={{background:'#888'}}>품절</span>}
+                        {isPreorder && <span className="preorder-badge">예약주문</span>}
+                        <span className="quickview-btn" onClick={(e) => { e.stopPropagation(); setQuickViewProduct(product); }}>QUICK VIEW</span>
                     </div>
                     <button className={`product-wishlist ${isWished ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}>
                         {isWished ? '♥' : '♡'}
@@ -2895,8 +3599,9 @@
         };
         
         const HomePage = () => {
-            const { navigate, products } = useApp();
+            const { navigate, products, setShowRoulette, user, timeSales } = useApp();
             const [currentSlide, setCurrentSlide] = useState(0);
+            const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
             
             const slides = [
                 { image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=80', subtitle: '2025 S/S COLLECTION', title: 'NEW ARRIVALS', btn: 'SHOP NOW' },
@@ -2911,9 +3616,29 @@
                 return () => clearInterval(timer);
             }, []);
             
+            // 타임세일 타이머
+            useEffect(() => {
+                if (timeSales.length === 0) return;
+                const timer = setInterval(() => {
+                    const end = timeSales[0].endTime?.toDate?.() || new Date();
+                    const diff = end - new Date();
+                    if (diff > 0) {
+                        setTimeLeft({
+                            hours: Math.floor(diff / (1000 * 60 * 60)),
+                            minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+                            seconds: Math.floor((diff % (1000 * 60)) / 1000)
+                        });
+                    }
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [timeSales]);
+            
             const goToSlide = (index) => setCurrentSlide(index);
             const prevSlide = () => setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
             const nextSlide = () => setCurrentSlide(prev => (prev + 1) % slides.length);
+            
+            const activeSale = timeSales[0];
+            const saleProducts = activeSale ? products.filter(p => activeSale.productIds?.includes(p.id)).slice(0, 4) : [];
             
             return (
                 <>
@@ -2938,6 +3663,29 @@
                             ))}
                         </div>
                     </div>
+                    
+                    {/* 타임세일 */}
+                    {activeSale && saleProducts.length > 0 && (
+                        <div className="timesale-section">
+                            <div className="timesale-header">
+                                <h2 className="timesale-title">⚡ {activeSale.title || 'TIME SALE'}</h2>
+                                <div className="timesale-timer">
+                                    <div className="timer-box"><div className="number">{String(timeLeft.hours).padStart(2,'0')}</div><div className="label">시간</div></div>
+                                    <div className="timer-box"><div className="number">{String(timeLeft.minutes).padStart(2,'0')}</div><div className="label">분</div></div>
+                                    <div className="timer-box"><div className="number">{String(timeLeft.seconds).padStart(2,'0')}</div><div className="label">초</div></div>
+                                </div>
+                            </div>
+                            <div className="timesale-products">
+                                {saleProducts.map(p => (
+                                    <div key={p.id} className="timesale-card" onClick={() => navigate('detail', p)}>
+                                        <div className="timesale-badge">{activeSale.discount}% OFF</div>
+                                        <img src={p.image} alt="" style={{width:'100%',aspectRatio:'1/1.2',objectFit:'cover'}} />
+                                        <div style={{padding:'15px'}}><p style={{fontSize:'12px',color:'#666'}}>{p.brand}</p><p style={{fontSize:'13px',fontWeight:'500',marginBottom:'8px'}}>{p.name}</p><p style={{color:'var(--red)',fontWeight:'700'}}>₩{Math.round(p.price * (100 - activeSale.discount) / 100).toLocaleString()}</p></div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     
                     <div className="category-banners">
                         <div className="category-banner" onClick={() => navigate('clothing')}>
@@ -3632,16 +4380,33 @@
         
         // 상품후기 페이지 (전체 공개)
         const ReviewPage = () => {
-            const { user, reviews, addReview, products, navigate } = useApp();
+            const { user, reviews, addReviewWithPhoto, products, navigate } = useApp();
             const [showModal, setShowModal] = useState(false);
             const [form, setForm] = useState({ productId: '', title: '', content: '', rating: 5 });
+            const [photos, setPhotos] = useState([]);
+            const [uploading, setUploading] = useState(false);
+            
+            const handlePhotoUpload = (e) => {
+                const files = Array.from(e.target.files);
+                if (photos.length + files.length > 3) { alert('사진은 최대 3장까지 업로드 가능합니다'); return; }
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => { setPhotos(prev => [...prev, reader.result]); };
+                    reader.readAsDataURL(file);
+                });
+            };
+            
+            const removePhoto = (index) => { setPhotos(prev => prev.filter((_, i) => i !== index)); };
             
             const handleSubmit = async () => {
                 if (!form.title || !form.content) { alert('제목과 내용을 입력해주세요'); return; }
+                setUploading(true);
                 const product = products.find(p => p.id === form.productId);
-                await addReview({ ...form, productName: product?.name || '', productBrand: product?.brand || '' });
+                await addReviewWithPhoto({ ...form, productName: product?.name || '', productBrand: product?.brand || '', photos });
                 setForm({ productId: '', title: '', content: '', rating: 5 });
+                setPhotos([]);
                 setShowModal(false);
+                setUploading(false);
             };
             
             return (
@@ -3649,6 +4414,10 @@
                     <div className="cs-header">
                         <h1>상품후기</h1>
                         <p>고객님들의 생생한 후기를 확인하세요</p>
+                        <div style={{marginTop:'15px',padding:'15px',background:'rgba(255,255,255,0.1)',borderRadius:'8px',display:'inline-block'}}>
+                            <span style={{marginRight:'20px'}}>📝 일반 리뷰 <strong>100P</strong></span>
+                            <span>📸 포토 리뷰 <strong>300P</strong></span>
+                        </div>
                     </div>
                     <div className="cs-content">
                         <div className="cs-toolbar">
@@ -3663,11 +4432,19 @@
                                     <div key={review.id} className="review-item">
                                         <div className="review-header">
                                             <div className="review-rating">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</div>
+                                            {review.hasPhoto && <span style={{background:'#ff9800',color:'white',padding:'2px 8px',borderRadius:'4px',fontSize:'11px',marginLeft:'10px'}}>포토</span>}
                                             <span className="review-date">{review.createdAt?.toDate?.().toLocaleDateString() || '-'}</span>
                                         </div>
                                         <div className="review-product">{review.productBrand} - {review.productName}</div>
                                         <h3 className="review-title">{review.title}</h3>
                                         <p className="review-content">{review.content}</p>
+                                        {review.photos && review.photos.length > 0 && (
+                                            <div style={{display:'flex',gap:'8px',marginTop:'15px'}}>
+                                                {review.photos.map((photo, i) => (
+                                                    <img key={i} src={photo} alt="" style={{width:'100px',height:'100px',objectFit:'cover',borderRadius:'8px',cursor:'pointer'}} />
+                                                ))}
+                                            </div>
+                                        )}
                                         <div className="review-author">{review.userName}</div>
                                     </div>
                                 ))}
@@ -3696,7 +4473,21 @@
                                 </div>
                                 <div className="form-group"><label className="form-label">제목</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
                                 <div className="form-group"><label className="form-label">내용</label><textarea className="form-input" rows="5" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea></div>
-                                <button className="btn-submit" onClick={handleSubmit}>등록하기</button>
+                                <div className="form-group">
+                                    <label className="form-label">사진 첨부 (최대 3장) - 사진 첨부 시 300P!</label>
+                                    <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} style={{marginBottom:'10px'}} />
+                                    {photos.length > 0 && (
+                                        <div style={{display:'flex',gap:'10px',flexWrap:'wrap'}}>
+                                            {photos.map((photo, i) => (
+                                                <div key={i} style={{position:'relative'}}>
+                                                    <img src={photo} alt="" style={{width:'80px',height:'80px',objectFit:'cover',borderRadius:'8px'}} />
+                                                    <button style={{position:'absolute',top:'-5px',right:'-5px',width:'20px',height:'20px',borderRadius:'50%',background:'var(--red)',color:'white',fontSize:'12px',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => removePhoto(i)}>×</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <button className="btn-submit" onClick={handleSubmit} disabled={uploading}>{uploading ? '등록 중...' : '등록하기'}</button>
                             </div>
                         </div>
                     )}
@@ -4541,7 +5332,7 @@
         };
         
         const AdminPage = () => {
-            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo, popup, updatePopup, coupons, addCoupon, deleteCoupon, notices, addNotice, deleteNotice, events, addEvent, deleteEvent, getGrade } = useApp();
+            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo, popup, updatePopup, coupons, addCoupon, deleteCoupon, notices, addNotice, deleteNotice, events, addEvent, deleteEvent, getGrade, timeSales, addTimeSale, deleteTimeSale, adminSendChat } = useApp();
             const [menu, setMenu] = useState('dashboard');
             const [showModal, setShowModal] = useState(false);
             const [editingProduct, setEditingProduct] = useState(null);
@@ -4585,9 +5376,13 @@
                             <li className={`admin-nav-item ${menu === 'qna' ? 'active' : ''}`} onClick={() => setMenu('qna')}>Q&A 관리</li>
                             <li className={`admin-nav-item ${menu === 'faq' ? 'active' : ''}`} onClick={() => setMenu('faq')}>FAQ 관리</li>
                             <li className={`admin-nav-item ${menu === 'coupon' ? 'active' : ''}`} onClick={() => setMenu('coupon')}>쿠폰 관리</li>
+                            <li className={`admin-nav-item ${menu === 'timesale' ? 'active' : ''}`} onClick={() => setMenu('timesale')}>타임세일</li>
+                            <li className={`admin-nav-item ${menu === 'chat' ? 'active' : ''}`} onClick={() => setMenu('chat')}>1:1 채팅</li>
                             <li className={`admin-nav-item ${menu === 'notice' ? 'active' : ''}`} onClick={() => setMenu('notice')}>공지사항</li>
                             <li className={`admin-nav-item ${menu === 'event' ? 'active' : ''}`} onClick={() => setMenu('event')}>이벤트</li>
                             <li className={`admin-nav-item ${menu === 'popup' ? 'active' : ''}`} onClick={() => setMenu('popup')}>팝업 관리</li>
+                            <li className={`admin-nav-item ${menu === 'visitlog' ? 'active' : ''}`} onClick={() => setMenu('visitlog')}>접속 통계</li>
+                            <li className={`admin-nav-item ${menu === 'points' ? 'active' : ''}`} onClick={() => setMenu('points')}>포인트 관리</li>
                             <li className={`admin-nav-item ${menu === 'siteinfo' ? 'active' : ''}`} onClick={() => setMenu('siteinfo')}>안내페이지</li>
                             <li className="admin-nav-item" onClick={() => navigate('home')}>쇼핑몰</li>
                             <li className="admin-nav-item" onClick={logout}>로그아웃</li>
@@ -4602,9 +5397,13 @@
                             menu === 'qna' ? 'Q&A 관리' :
                             menu === 'faq' ? 'FAQ 관리' :
                             menu === 'coupon' ? '쿠폰 관리' :
+                            menu === 'timesale' ? '타임세일 관리' :
+                            menu === 'chat' ? '1:1 채팅 관리' :
                             menu === 'notice' ? '공지사항 관리' :
                             menu === 'event' ? '이벤트 관리' :
                             menu === 'popup' ? '팝업 관리' :
+                            menu === 'visitlog' ? '접속 통계' :
+                            menu === 'points' ? '포인트 관리' :
                             menu === 'siteinfo' ? '안내페이지 관리' : ''
                         }</h1></div>
                         <div className="admin-content">
@@ -4692,6 +5491,22 @@
                                 <AdminPopupSection popup={popup} updatePopup={updatePopup} />
                             )}
                             
+                            {menu === 'timesale' && (
+                                <AdminTimeSaleSection timeSales={timeSales} addTimeSale={addTimeSale} deleteTimeSale={deleteTimeSale} products={products} />
+                            )}
+                            
+                            {menu === 'chat' && (
+                                <AdminChatSection adminSendChat={adminSendChat} />
+                            )}
+                            
+                            {menu === 'visitlog' && (
+                                <AdminVisitLogSection />
+                            )}
+                            
+                            {menu === 'points' && (
+                                <AdminPointSection />
+                            )}
+                            
                             {menu === 'siteinfo' && (
                                 <AdminSiteInfoSection siteInfo={siteInfo} updateSiteInfo={updateSiteInfo} />
                             )}
@@ -4723,7 +5538,10 @@
                 faq: <FaqPage />,
                 search: <SearchPage />,
                 notice: <NoticePage />,
-                event: <EventPage />
+                event: <EventPage />,
+                point: <PointPage />,
+                attendance: <AttendancePage />,
+                address: <AddressPage />
             };
             
             let content;
@@ -4733,7 +5551,18 @@
             return (<><Header /><main>{content}</main><Footer /><RecentViewed /></>);
         };
         
-        const App = () => (<AppProvider><Router /><Toast /><FloatingButtons /><PopupModal /></AppProvider>);
+        const App = () => (
+            <AppProvider>
+                <Router />
+                <Toast />
+                <FloatingButtons />
+                <PopupModal />
+                <QuickView />
+                <ImageZoom />
+                <ChatWidget />
+                <RouletteModal />
+            </AppProvider>
+        );
         
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
