@@ -77,6 +77,323 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
+        /* Floating Messenger Buttons */
+        .floating-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .floating-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        
+        .floating-btn.kakao {
+            background: #FEE500;
+        }
+        
+        .floating-btn.telegram {
+            background: #0088cc;
+        }
+        
+        .floating-btn svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .floating-btn.kakao svg {
+            fill: #391B1B;
+        }
+        
+        .floating-btn.telegram svg {
+            fill: #ffffff;
+        }
+        
+        @media (max-width: 768px) {
+            .floating-btns {
+                bottom: 20px;
+                right: 15px;
+                gap: 10px;
+            }
+            .floating-btn {
+                width: 45px;
+                height: 45px;
+            }
+            .floating-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+        
+        /* CS CENTER Pages */
+        .cs-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .cs-header {
+            text-align: center;
+            padding: 50px 0 30px;
+            border-bottom: 2px solid var(--black);
+        }
+        
+        .cs-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .cs-header p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+        
+        .cs-content {
+            padding: 30px 0 80px;
+        }
+        
+        .cs-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+        
+        /* Q&A */
+        .qna-list { }
+        
+        .qna-item {
+            border: 1px solid var(--gray-200);
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .qna-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .qna-status {
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .qna-status.waiting {
+            background: #fff8e1;
+            color: #f9a825;
+        }
+        
+        .qna-status.answered {
+            background: #e8f5e9;
+            color: #43a047;
+        }
+        
+        .qna-date {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+        
+        .qna-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .qna-content {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+        
+        .qna-answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--gray-50);
+            border-left: 3px solid var(--black);
+        }
+        
+        .qna-answer strong {
+            display: block;
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        
+        .qna-answer p {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        
+        /* Review */
+        .review-list { }
+        
+        .review-item {
+            border-bottom: 1px solid var(--gray-200);
+            padding: 25px 0;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .review-rating {
+            color: #f9a825;
+            font-size: 14px;
+        }
+        
+        .review-date {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+        
+        .review-product {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        
+        .review-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .review-content {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .review-author {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+        
+        .rating-select {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .rating-star {
+            font-size: 24px;
+            color: var(--gray-300);
+            cursor: pointer;
+        }
+        
+        .rating-star.active {
+            color: #f9a825;
+        }
+        
+        /* FAQ */
+        .faq-list { }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .faq-question {
+            display: flex;
+            align-items: center;
+            padding: 18px 0;
+            cursor: pointer;
+        }
+        
+        .faq-q, .faq-a {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .faq-q {
+            background: var(--black);
+            color: var(--white);
+        }
+        
+        .faq-a {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+        
+        .faq-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .faq-arrow {
+            font-size: 20px;
+            color: var(--gray-400);
+        }
+        
+        .faq-answer {
+            display: flex;
+            padding: 0 0 20px;
+            margin-left: 43px;
+        }
+        
+        .faq-answer p {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+        
+        /* Info Page */
+        .info-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--gray-600);
+        }
+        
+        .info-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--black);
+            margin: 30px 0 15px;
+        }
+        
+        .info-content h3:first-child {
+            margin-top: 0;
+        }
+        
+        .info-content p {
+            margin-bottom: 15px;
+        }
+        
         /* Toast */
         .toast {
             position: fixed;
@@ -1364,6 +1681,10 @@
             const [members, setMembers] = useState([]);
             const [toast, setToast] = useState(null);
             const [buyNowItem, setBuyNowItem] = useState(null);
+            const [qnas, setQnas] = useState([]);
+            const [reviews, setReviews] = useState([]);
+            const [faqs, setFaqs] = useState([]);
+            const [siteInfo, setSiteInfo] = useState({ shipping: '', exchange: '' });
             
             const showToast = (message, type = 'info') => {
                 setToast({ message, type });
@@ -1451,6 +1772,42 @@
                 });
                 return () => { ordersUnsub(); membersUnsub(); };
             }, [isAdmin]);
+            
+            // Q&A (본인 것만 or 관리자는 전체)
+            useEffect(() => {
+                if (!user) { setQnas([]); return; }
+                const query = isAdmin 
+                    ? db.collection('qnas').orderBy('createdAt', 'desc')
+                    : db.collection('qnas').where('userId', '==', user.uid).orderBy('createdAt', 'desc');
+                const unsub = query.onSnapshot((snapshot) => {
+                    setQnas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                }, (error) => console.error('QnA error:', error));
+                return () => unsub();
+            }, [user, isAdmin]);
+            
+            // Reviews (전체 공개)
+            useEffect(() => {
+                const unsub = db.collection('reviews').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+                    setReviews(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // FAQs (전체 공개)
+            useEffect(() => {
+                const unsub = db.collection('faqs').orderBy('order', 'asc').onSnapshot((snapshot) => {
+                    setFaqs(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // Site Info (배송안내, 교환/반품)
+            useEffect(() => {
+                const unsub = db.collection('siteInfo').doc('info').onSnapshot((doc) => {
+                    if (doc.exists) setSiteInfo(doc.data());
+                });
+                return () => unsub();
+            }, []);
             
             useEffect(() => {
                 if (user) localStorage.setItem(`cart_${user.uid}`, JSON.stringify(cart));
@@ -1548,6 +1905,69 @@
                 showToast('상태가 변경되었습니다', 'success');
             };
             
+            // Q&A 함수
+            const addQna = async (data) => {
+                await db.collection('qnas').add({
+                    ...data,
+                    userId: user.uid,
+                    userName: user.name,
+                    userEmail: user.email,
+                    status: 'waiting',
+                    answer: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('문의가 등록되었습니다', 'success');
+            };
+            
+            const answerQna = async (id, answer) => {
+                await db.collection('qnas').doc(id).update({ answer, status: 'answered', answeredAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('답변이 등록되었습니다', 'success');
+            };
+            
+            const deleteQna = async (id) => {
+                await db.collection('qnas').doc(id).delete();
+                showToast('삭제되었습니다', 'success');
+            };
+            
+            // Review 함수
+            const addReview = async (data) => {
+                await db.collection('reviews').add({
+                    ...data,
+                    userId: user.uid,
+                    userName: user.name,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('후기가 등록되었습니다', 'success');
+            };
+            
+            const deleteReview = async (id) => {
+                await db.collection('reviews').doc(id).delete();
+                showToast('삭제되었습니다', 'success');
+            };
+            
+            // FAQ 함수
+            const addFaq = async (data) => {
+                const count = faqs.length;
+                await db.collection('faqs').add({ ...data, order: count, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('FAQ가 등록되었습니다', 'success');
+            };
+            
+            const updateFaq = async (id, data) => {
+                await db.collection('faqs').doc(id).update(data);
+                showToast('FAQ가 수정되었습니다', 'success');
+            };
+            
+            const deleteFaq = async (id) => {
+                await db.collection('faqs').doc(id).delete();
+                showToast('삭제되었습니다', 'success');
+            };
+            
+            // Site Info 함수
+            const updateSiteInfo = async (data) => {
+                await db.collection('siteInfo').doc('info').set(data, { merge: true });
+                showToast('저장되었습니다', 'success');
+            };
+            
             const getProductsByCategory = (category) => {
                 if (category === 'new') return products.slice(0, 20);
                 if (category === 'brand') return products;
@@ -1562,7 +1982,11 @@
                     currentPage, navigate, selectedProduct,
                     products, addProduct, updateProduct, deleteProduct, getProductsByCategory,
                     orders, allOrders, createOrder, updateOrderStatus, members,
-                    showToast, toast, buyNowItem, setBuyNowItem
+                    showToast, toast, buyNowItem, setBuyNowItem,
+                    qnas, addQna, answerQna, deleteQna,
+                    reviews, addReview, deleteReview,
+                    faqs, addFaq, updateFaq, deleteFaq,
+                    siteInfo, updateSiteInfo
                 }}>
                     {children}
                 </AppContext.Provider>
@@ -1575,6 +1999,27 @@
             const { toast } = useApp();
             if (!toast) return null;
             return <div className={`toast ${toast.type}`}>{toast.message}</div>;
+        };
+        
+        const FloatingButtons = () => {
+            // 여기에 실제 카카오톡 채널/텔레그램 링크를 입력하세요
+            const kakaoLink = 'https://pf.kakao.com/_xYourID'; // 카카오톡 채널 링크
+            const telegramLink = 'https://t.me/YourUsername'; // 텔레그램 링크
+            
+            return (
+                <div className="floating-btns">
+                    <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="floating-btn telegram" title="텔레그램 문의">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                    </a>
+                    <a href={kakaoLink} target="_blank" rel="noopener noreferrer" className="floating-btn kakao" title="카카오톡 문의">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3zm5.907 8.06l1.47-1.424a.472.472 0 0 0-.656-.678l-1.928 1.866V9.282a.472.472 0 0 0-.944 0v2.557a.471.471 0 0 0 0 .222V13.5a.472.472 0 0 0 .944 0v-1.363l.427-.413 1.428 2.033a.472.472 0 1 0 .773-.543l-1.514-2.155zm-2.958 1.924h-1.46V9.297a.472.472 0 0 0-.943 0v4.159c0 .26.21.472.471.472h1.932a.472.472 0 1 0 0-.944zm-5.857-1.092l.696-1.707.638 1.707H9.092zm2.523.488l.002-.016a.469.469 0 0 0-.127-.32l-1.046-2.8a.69.69 0 0 0-.627-.474.696.696 0 0 0-.653.447l-1.661 4.075a.472.472 0 0 0 .874.357l.33-.813h2.07l.299.8a.472.472 0 1 0 .884-.33l-.345-.926zm-7.086 1.028l1.078-1.353-1.108-1.39a.472.472 0 1 1 .738-.587l.755.948.73-.947a.472.472 0 1 1 .746.576l-1.093 1.416 1.108 1.389a.472.472 0 0 1-.37.765.47.47 0 0 1-.369-.177l-.772-.97-.77.97a.472.472 0 0 1-.673-.64z"/>
+                        </svg>
+                    </a>
+                </div>
+            );
         };
         
         const LoadingScreen = () => (
@@ -1650,10 +2095,11 @@
                         <div>
                             <h4 className="footer-title">CS CENTER</h4>
                             <ul className="footer-links">
-                                <li>Q&A</li>
-                                <li>상품후기</li>
-                                <li>배송안내</li>
-                                <li>교환/반품</li>
+                                <li onClick={() => navigate('qna')}>Q&A</li>
+                                <li onClick={() => navigate('review')}>상품후기</li>
+                                <li onClick={() => navigate('shipping')}>배송안내</li>
+                                <li onClick={() => navigate('exchange')}>교환/반품</li>
+                                <li onClick={() => navigate('faq')}>자주묻는질문</li>
                             </ul>
                         </div>
                         <div>
@@ -2219,8 +2665,304 @@
             );
         };
         
+        // Q&A 페이지 (본인 문의만 보임, 관리자는 전체)
+        const QnaPage = () => {
+            const { user, qnas, addQna, navigate } = useApp();
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ title: '', content: '' });
+            
+            if (!user) {
+                return (
+                    <div className="cs-page">
+                        <div className="cs-header"><h1>Q&A 문의</h1></div>
+                        <div className="cs-content">
+                            <div className="empty-state">
+                                <h3>로그인이 필요합니다</h3>
+                                <p>문의하기는 회원만 이용 가능합니다</p>
+                                <button className="btn-buy" style={{marginTop:'20px', padding:'12px 30px'}} onClick={() => navigate('login')}>로그인</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            
+            const handleSubmit = async () => {
+                if (!form.title || !form.content) { alert('제목과 내용을 입력해주세요'); return; }
+                await addQna(form);
+                setForm({ title: '', content: '' });
+                setShowModal(false);
+            };
+            
+            return (
+                <div className="cs-page">
+                    <div className="cs-header">
+                        <h1>Q&A 문의</h1>
+                        <p>1:1 문의는 관리자만 확인할 수 있습니다</p>
+                    </div>
+                    <div className="cs-content">
+                        <div className="cs-toolbar">
+                            <span>총 {qnas.length}건</span>
+                            <button className="btn-buy" style={{padding:'10px 20px'}} onClick={() => setShowModal(true)}>문의하기</button>
+                        </div>
+                        {qnas.length === 0 ? (
+                            <div className="empty-state"><h3>문의 내역이 없습니다</h3></div>
+                        ) : (
+                            <div className="qna-list">
+                                {qnas.map(qna => (
+                                    <div key={qna.id} className="qna-item">
+                                        <div className="qna-header">
+                                            <span className={`qna-status ${qna.status}`}>{qna.status === 'answered' ? '답변완료' : '답변대기'}</span>
+                                            <span className="qna-date">{qna.createdAt?.toDate?.().toLocaleDateString() || '-'}</span>
+                                        </div>
+                                        <h3 className="qna-title">{qna.title}</h3>
+                                        <p className="qna-content">{qna.content}</p>
+                                        {qna.answer && (
+                                            <div className="qna-answer">
+                                                <strong>답변</strong>
+                                                <p>{qna.answer}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header"><h2>문의하기</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                                <div className="form-group"><label className="form-label">제목</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">내용</label><textarea className="form-input" rows="5" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea></div>
+                                <button className="btn-submit" onClick={handleSubmit}>등록하기</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        // 상품후기 페이지 (전체 공개)
+        const ReviewPage = () => {
+            const { user, reviews, addReview, products, navigate } = useApp();
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ productId: '', title: '', content: '', rating: 5 });
+            
+            const handleSubmit = async () => {
+                if (!form.title || !form.content) { alert('제목과 내용을 입력해주세요'); return; }
+                const product = products.find(p => p.id === form.productId);
+                await addReview({ ...form, productName: product?.name || '', productBrand: product?.brand || '' });
+                setForm({ productId: '', title: '', content: '', rating: 5 });
+                setShowModal(false);
+            };
+            
+            return (
+                <div className="cs-page">
+                    <div className="cs-header">
+                        <h1>상품후기</h1>
+                        <p>고객님들의 생생한 후기를 확인하세요</p>
+                    </div>
+                    <div className="cs-content">
+                        <div className="cs-toolbar">
+                            <span>총 {reviews.length}건</span>
+                            {user && <button className="btn-buy" style={{padding:'10px 20px'}} onClick={() => setShowModal(true)}>후기작성</button>}
+                        </div>
+                        {reviews.length === 0 ? (
+                            <div className="empty-state"><h3>등록된 후기가 없습니다</h3></div>
+                        ) : (
+                            <div className="review-list">
+                                {reviews.map(review => (
+                                    <div key={review.id} className="review-item">
+                                        <div className="review-header">
+                                            <div className="review-rating">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</div>
+                                            <span className="review-date">{review.createdAt?.toDate?.().toLocaleDateString() || '-'}</span>
+                                        </div>
+                                        <div className="review-product">{review.productBrand} - {review.productName}</div>
+                                        <h3 className="review-title">{review.title}</h3>
+                                        <p className="review-content">{review.content}</p>
+                                        <div className="review-author">{review.userName}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header"><h2>후기작성</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                                <div className="form-group">
+                                    <label className="form-label">상품 선택</label>
+                                    <select className="form-input" value={form.productId} onChange={e => setForm({...form, productId: e.target.value})}>
+                                        <option value="">선택하세요</option>
+                                        {products.map(p => <option key={p.id} value={p.id}>{p.brand} - {p.name}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">평점</label>
+                                    <div className="rating-select">
+                                        {[1,2,3,4,5].map(n => (
+                                            <span key={n} className={`rating-star ${form.rating >= n ? 'active' : ''}`} onClick={() => setForm({...form, rating: n})}>★</span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="form-group"><label className="form-label">제목</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">내용</label><textarea className="form-input" rows="5" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea></div>
+                                <button className="btn-submit" onClick={handleSubmit}>등록하기</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        // 배송안내 페이지
+        const ShippingPage = () => {
+            const { siteInfo } = useApp();
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>배송안내</h1></div>
+                    <div className="cs-content">
+                        <div className="info-content" dangerouslySetInnerHTML={{ __html: siteInfo.shipping?.replace(/\n/g, '<br/>') || '<p>배송안내 내용이 없습니다.</p>' }} />
+                    </div>
+                </div>
+            );
+        };
+        
+        // 교환/반품 페이지
+        const ExchangePage = () => {
+            const { siteInfo } = useApp();
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>교환/반품</h1></div>
+                    <div className="cs-content">
+                        <div className="info-content" dangerouslySetInnerHTML={{ __html: siteInfo.exchange?.replace(/\n/g, '<br/>') || '<p>교환/반품 내용이 없습니다.</p>' }} />
+                    </div>
+                </div>
+            );
+        };
+        
+        // FAQ 페이지
+        const FaqPage = () => {
+            const { faqs } = useApp();
+            const [openId, setOpenId] = useState(null);
+            
+            return (
+                <div className="cs-page">
+                    <div className="cs-header">
+                        <h1>자주묻는질문</h1>
+                        <p>고객님들이 자주 묻는 질문을 모았습니다</p>
+                    </div>
+                    <div className="cs-content">
+                        {faqs.length === 0 ? (
+                            <div className="empty-state"><h3>등록된 FAQ가 없습니다</h3></div>
+                        ) : (
+                            <div className="faq-list">
+                                {faqs.map(faq => (
+                                    <div key={faq.id} className={`faq-item ${openId === faq.id ? 'open' : ''}`}>
+                                        <div className="faq-question" onClick={() => setOpenId(openId === faq.id ? null : faq.id)}>
+                                            <span className="faq-q">Q</span>
+                                            <span className="faq-title">{faq.question}</span>
+                                            <span className="faq-arrow">{openId === faq.id ? '−' : '+'}</span>
+                                        </div>
+                                        {openId === faq.id && (
+                                            <div className="faq-answer">
+                                                <span className="faq-a">A</span>
+                                                <p>{faq.answer}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        
+        // 관리자 FAQ 섹션
+        const AdminFaqSection = ({ faqs, addFaq, updateFaq, deleteFaq }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [editingFaq, setEditingFaq] = useState(null);
+            const [form, setForm] = useState({ question: '', answer: '' });
+            
+            const handleNew = () => { setEditingFaq(null); setForm({ question: '', answer: '' }); setShowModal(true); };
+            const handleEdit = (faq) => { setEditingFaq(faq); setForm({ question: faq.question, answer: faq.answer }); setShowModal(true); };
+            const handleSubmit = async () => {
+                if (!form.question || !form.answer) { alert('질문과 답변을 입력해주세요'); return; }
+                if (editingFaq) await updateFaq(editingFaq.id, form);
+                else await addFaq(form);
+                setShowModal(false);
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header">
+                        <h2>FAQ 목록 ({faqs.length})</h2>
+                        <button className="btn-admin btn-admin-primary" onClick={handleNew}>+ FAQ 등록</button>
+                    </div>
+                    <table className="admin-table">
+                        <thead><tr><th>질문</th><th>답변</th><th>관리</th></tr></thead>
+                        <tbody>
+                            {faqs.map(faq => (
+                                <tr key={faq.id}>
+                                    <td style={{maxWidth:'250px'}}>{faq.question}</td>
+                                    <td style={{maxWidth:'350px', fontSize:'13px', color:'#666'}}>{faq.answer?.slice(0,80)}...</td>
+                                    <td>
+                                        <button className="btn-admin btn-admin-secondary" style={{marginRight:'5px'}} onClick={() => handleEdit(faq)}>수정</button>
+                                        <button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteFaq(faq.id); }}>삭제</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header"><h2>{editingFaq ? 'FAQ 수정' : 'FAQ 등록'}</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                                <div className="form-group"><label className="form-label">질문</label><input className="form-input" value={form.question} onChange={e => setForm({...form, question: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">답변</label><textarea className="form-input" rows="5" value={form.answer} onChange={e => setForm({...form, answer: e.target.value})}></textarea></div>
+                                <button className="btn-submit" onClick={handleSubmit}>{editingFaq ? '수정' : '등록'}</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        // 관리자 안내페이지 섹션
+        const AdminSiteInfoSection = ({ siteInfo, updateSiteInfo }) => {
+            const [shipping, setShipping] = useState(siteInfo.shipping || '');
+            const [exchange, setExchange] = useState(siteInfo.exchange || '');
+            
+            useEffect(() => {
+                setShipping(siteInfo.shipping || '');
+                setExchange(siteInfo.exchange || '');
+            }, [siteInfo]);
+            
+            return (
+                <div className="admin-siteinfo">
+                    <div className="admin-table-wrap" style={{marginBottom:'30px'}}>
+                        <div className="admin-table-header"><h2>배송안내</h2></div>
+                        <div style={{padding:'20px'}}>
+                            <textarea className="form-input" rows="10" value={shipping} onChange={e => setShipping(e.target.value)} placeholder="배송안내 내용을 입력하세요. (줄바꿈 가능)"></textarea>
+                            <button className="btn-admin btn-admin-primary" style={{marginTop:'15px'}} onClick={() => updateSiteInfo({ shipping })}>저장</button>
+                        </div>
+                    </div>
+                    <div className="admin-table-wrap">
+                        <div className="admin-table-header"><h2>교환/반품</h2></div>
+                        <div style={{padding:'20px'}}>
+                            <textarea className="form-input" rows="10" value={exchange} onChange={e => setExchange(e.target.value)} placeholder="교환/반품 안내 내용을 입력하세요. (줄바꿈 가능)"></textarea>
+                            <button className="btn-admin btn-admin-primary" style={{marginTop:'15px'}} onClick={() => updateSiteInfo({ exchange })}>저장</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
         const AdminPage = () => {
-            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus } = useApp();
+            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo } = useApp();
             const [menu, setMenu] = useState('dashboard');
             const [showModal, setShowModal] = useState(false);
             const [editingProduct, setEditingProduct] = useState(null);
@@ -2261,12 +3003,23 @@
                             <li className={`admin-nav-item ${menu === 'products' ? 'active' : ''}`} onClick={() => setMenu('products')}>상품관리</li>
                             <li className={`admin-nav-item ${menu === 'orders' ? 'active' : ''}`} onClick={() => setMenu('orders')}>주문관리</li>
                             <li className={`admin-nav-item ${menu === 'members' ? 'active' : ''}`} onClick={() => setMenu('members')}>회원관리</li>
+                            <li className={`admin-nav-item ${menu === 'qna' ? 'active' : ''}`} onClick={() => setMenu('qna')}>Q&A 관리</li>
+                            <li className={`admin-nav-item ${menu === 'faq' ? 'active' : ''}`} onClick={() => setMenu('faq')}>FAQ 관리</li>
+                            <li className={`admin-nav-item ${menu === 'siteinfo' ? 'active' : ''}`} onClick={() => setMenu('siteinfo')}>안내페이지</li>
                             <li className="admin-nav-item" onClick={() => navigate('home')}>쇼핑몰</li>
                             <li className="admin-nav-item" onClick={logout}>로그아웃</li>
                         </ul>
                     </aside>
                     <main className="admin-main">
-                        <div className="admin-header"><h1>{menu === 'dashboard' ? '대시보드' : menu === 'products' ? '상품관리' : menu === 'orders' ? '주문관리' : '회원관리'}</h1></div>
+                        <div className="admin-header"><h1>{
+                            menu === 'dashboard' ? '대시보드' : 
+                            menu === 'products' ? '상품관리' : 
+                            menu === 'orders' ? '주문관리' : 
+                            menu === 'members' ? '회원관리' :
+                            menu === 'qna' ? 'Q&A 관리' :
+                            menu === 'faq' ? 'FAQ 관리' :
+                            menu === 'siteinfo' ? '안내페이지 관리' : ''
+                        }</h1></div>
                         <div className="admin-content">
                             {menu === 'dashboard' && (
                                 <div className="admin-stats">
@@ -2377,6 +3130,44 @@
                                     </table>
                                 </div>
                             )}
+                            
+                            {menu === 'qna' && (
+                                <div className="admin-table-wrap">
+                                    <div className="admin-table-header"><h2>Q&A 목록 ({qnas.length})</h2></div>
+                                    <table className="admin-table">
+                                        <thead><tr><th>상태</th><th>제목</th><th>작성자</th><th>날짜</th><th>관리</th></tr></thead>
+                                        <tbody>
+                                            {qnas.map(qna => (
+                                                <tr key={qna.id}>
+                                                    <td><span className={`status-badge status-${qna.status === 'answered' ? 'completed' : 'pending'}`}>{qna.status === 'answered' ? '답변완료' : '답변대기'}</span></td>
+                                                    <td style={{maxWidth:'200px'}}>
+                                                        <strong>{qna.title}</strong>
+                                                        <p style={{fontSize:'12px', color:'#888', marginTop:'5px'}}>{qna.content?.slice(0,50)}...</p>
+                                                        {qna.answer && <p style={{fontSize:'12px', color:'#1976d2', marginTop:'5px'}}>↳ {qna.answer?.slice(0,30)}...</p>}
+                                                    </td>
+                                                    <td>{qna.userName}<br/><small style={{color:'#999'}}>{qna.userEmail}</small></td>
+                                                    <td>{qna.createdAt?.toDate?.().toLocaleDateString() || '-'}</td>
+                                                    <td>
+                                                        <button className="btn-admin btn-admin-primary" style={{marginRight:'5px'}} onClick={() => {
+                                                            const answer = prompt('답변을 입력하세요:', qna.answer || '');
+                                                            if (answer !== null) answerQna(qna.id, answer);
+                                                        }}>답변</button>
+                                                        <button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteQna(qna.id); }}>삭제</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                            
+                            {menu === 'faq' && (
+                                <AdminFaqSection faqs={faqs} addFaq={addFaq} updateFaq={updateFaq} deleteFaq={deleteFaq} />
+                            )}
+                            
+                            {menu === 'siteinfo' && (
+                                <AdminSiteInfoSection siteInfo={siteInfo} updateSiteInfo={updateSiteInfo} />
+                            )}
                         </div>
                     </main>
                 </div>
@@ -2389,7 +3180,21 @@
             if (currentPage === 'admin' && isAdmin) return <AdminPage />;
             
             const categoryPages = ['new', 'brand', 'clothing', 'shoes', 'bags'];
-            const pages = { home: <HomePage />, login: <LoginPage />, register: <RegisterPage />, detail: <DetailPage />, cart: <CartPage />, checkout: <CheckoutPage />, wishlist: <WishlistPage />, mypage: <MyPage /> };
+            const pages = { 
+                home: <HomePage />, 
+                login: <LoginPage />, 
+                register: <RegisterPage />, 
+                detail: <DetailPage />, 
+                cart: <CartPage />, 
+                checkout: <CheckoutPage />, 
+                wishlist: <WishlistPage />, 
+                mypage: <MyPage />,
+                qna: <QnaPage />,
+                review: <ReviewPage />,
+                shipping: <ShippingPage />,
+                exchange: <ExchangePage />,
+                faq: <FaqPage />
+            };
             
             let content;
             if (categoryPages.includes(currentPage)) content = <CategoryPage category={currentPage} />;
@@ -2398,7 +3203,7 @@
             return (<><Header /><main>{content}</main><Footer /></>);
         };
         
-        const App = () => (<AppProvider><Router /><Toast /></AppProvider>);
+        const App = () => (<AppProvider><Router /><Toast /><FloatingButtons /></AppProvider>);
         
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
