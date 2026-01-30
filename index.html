@@ -182,39 +182,109 @@
             font-weight: 600;
         }
         
-        /* Main Visual - wizwid style */
-        .main-visual {
+        /* Main Visual Slider */
+        .main-slider {
             position: relative;
             height: 500px;
             overflow: hidden;
         }
         
-        .main-visual img {
+        .slider-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+        
+        .slider-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .slider-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
         
-        .main-visual-content {
+        .slider-slide::after {
+            content: '';
             position: absolute;
-            bottom: 60px;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 60%);
+        }
+        
+        .slider-content {
+            position: absolute;
+            bottom: 80px;
             left: 60px;
+            z-index: 2;
             color: var(--white);
         }
         
-        .main-visual-subtitle {
+        .slider-subtitle {
             font-size: 13px;
             letter-spacing: 2px;
             margin-bottom: 12px;
             opacity: 0.9;
         }
         
-        .main-visual-title {
+        .slider-title {
             font-family: 'Gothic A1', sans-serif;
             font-size: 42px;
             font-weight: 900;
             line-height: 1.2;
             margin-bottom: 25px;
+        }
+        
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .slider-arrow:hover {
+            background: var(--white);
+        }
+        
+        .slider-arrow.prev { left: 20px; }
+        .slider-arrow.next { right: 20px; }
+        
+        .slider-dots {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .slider-dot.active {
+            background: var(--white);
+            width: 30px;
+            border-radius: 5px;
         }
         
         .btn-white {
@@ -1219,11 +1289,16 @@
         @media (max-width: 768px) {
             .header-main { padding: 15px 20px; }
             .nav-menu { display: none; }
-            .main-visual { height: 350px; }
-            .main-visual-title { font-size: 28px; }
+            .main-slider { height: 350px; }
+            .slider-title { font-size: 28px; }
+            .slider-content { left: 25px; bottom: 50px; }
+            .slider-arrow { width: 36px; height: 36px; font-size: 16px; }
+            .slider-arrow.prev { left: 10px; }
+            .slider-arrow.next { right: 10px; }
             .section { padding: 40px 20px; }
-            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .category-banners { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .product-grid.list-view { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .category-banners { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; margin: 30px auto 40px; }
             .footer-content { grid-template-columns: 1fr; gap: 25px; }
             .admin-sidebar { display: none; }
             .admin-main { margin-left: 0; }
@@ -1610,15 +1685,46 @@
         
         const HomePage = () => {
             const { navigate, products } = useApp();
+            const [currentSlide, setCurrentSlide] = useState(0);
+            
+            const slides = [
+                { image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=80', subtitle: '2025 S/S COLLECTION', title: 'NEW ARRIVALS', btn: 'SHOP NOW' },
+                { image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=80', subtitle: 'SUMMER SALE', title: 'UP TO 50% OFF', btn: 'SALE 보기' },
+                { image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80', subtitle: 'DESIGNER BRAND', title: 'BEST SELLERS', btn: '베스트 보기' },
+            ];
+            
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setCurrentSlide(prev => (prev + 1) % slides.length);
+                }, 5000);
+                return () => clearInterval(timer);
+            }, []);
+            
+            const goToSlide = (index) => setCurrentSlide(index);
+            const prevSlide = () => setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
+            const nextSlide = () => setCurrentSlide(prev => (prev + 1) % slides.length);
             
             return (
                 <>
-                    <div className="main-visual">
-                        <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=80" alt="Main" />
-                        <div className="main-visual-content">
-                            <p className="main-visual-subtitle">2025 S/S COLLECTION</p>
-                            <h1 className="main-visual-title">NEW ARRIVALS</h1>
-                            <button className="btn-white" onClick={() => navigate('new')}>SHOP NOW</button>
+                    <div className="main-slider">
+                        <div className="slider-track" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                            {slides.map((slide, idx) => (
+                                <div key={idx} className="slider-slide">
+                                    <img src={slide.image} alt="" />
+                                    <div className="slider-content">
+                                        <p className="slider-subtitle">{slide.subtitle}</p>
+                                        <h1 className="slider-title">{slide.title}</h1>
+                                        <button className="btn-white" onClick={() => navigate('new')}>{slide.btn}</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="slider-arrow prev" onClick={prevSlide}>‹</button>
+                        <button className="slider-arrow next" onClick={nextSlide}>›</button>
+                        <div className="slider-dots">
+                            {slides.map((_, idx) => (
+                                <button key={idx} className={`slider-dot ${currentSlide === idx ? 'active' : ''}`} onClick={() => goToSlide(idx)} />
+                            ))}
                         </div>
                     </div>
                     
