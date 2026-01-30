@@ -1863,10 +1863,19 @@
             background: var(--white);
             padding: 20px;
             border: 1px solid var(--gray-200);
+            border-radius: 8px;
         }
         
         .stat-card h3 { font-size: 12px; color: var(--gray-500); margin-bottom: 10px; }
         .stat-card .value { font-size: 28px; font-weight: 700; }
+        .stat-card .sub { font-size: 11px; color: var(--gray-500); margin-top: 5px; }
+        .stat-card.highlight { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card.highlight h3, .stat-card.highlight .value, .stat-card.highlight .sub { color: white; }
+        
+        .dashboard-section { margin-bottom: 25px; }
+        .dashboard-section-title { font-size: 15px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .admin-dashboard { padding: 5px; }
         
         .admin-table-wrap {
             background: var(--white);
@@ -3934,6 +3943,301 @@
             );
         };
         
+        // 관리자 대시보드 컴포넌트
+        const AdminDashboard = ({ allOrders, members, products }) => {
+            // 주문 상태별 통계
+            const pendingOrders = allOrders.filter(o => o.status === 'pending');
+            const confirmedOrders = allOrders.filter(o => o.status === 'confirmed');
+            const shippedOrders = allOrders.filter(o => o.status === 'shipped');
+            const completedOrders = allOrders.filter(o => o.status === 'completed');
+            
+            // 매출 통계
+            const totalRevenue = allOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const completedRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const pendingRevenue = pendingOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const confirmedRevenue = confirmedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const shippedRevenue = shippedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            
+            // 오늘 주문
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayOrders = allOrders.filter(o => {
+                const orderDate = o.createdAt?.toDate?.();
+                return orderDate && orderDate >= today;
+            });
+            const todayRevenue = todayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            
+            // 이번 달 주문
+            const thisMonth = new Date();
+            thisMonth.setDate(1);
+            thisMonth.setHours(0, 0, 0, 0);
+            const monthOrders = allOrders.filter(o => {
+                const orderDate = o.createdAt?.toDate?.();
+                return orderDate && orderDate >= thisMonth;
+            });
+            const monthRevenue = monthOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            
+            // 상품 통계
+            const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 5);
+            const outOfStockProducts = products.filter(p => p.stock === 0);
+            
+            // 최근 주문 5개
+            const recentOrders = [...allOrders].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
+            
+            const formatMoney = (amount) => {
+                if (amount >= 10000) return `₩${(amount / 10000).toFixed(1)}만`;
+                return `₩${amount.toLocaleString()}`;
+            };
+            
+            return (
+                <div className="admin-dashboard">
+                    {/* 주요 지표 */}
+                    <div className="dashboard-section">
+                        <h3 className="dashboard-section-title">📊 주요 지표</h3>
+                        <div className="admin-stats" style={{gridTemplateColumns: 'repeat(5, 1fr)'}}>
+                            <div className="stat-card highlight">
+                                <h3>오늘 매출</h3>
+                                <div className="value">{formatMoney(todayRevenue)}</div>
+                                <div className="sub">{todayOrders.length}건</div>
+                            </div>
+                            <div className="stat-card">
+                                <h3>이번 달 매출</h3>
+                                <div className="value">{formatMoney(monthRevenue)}</div>
+                                <div className="sub">{monthOrders.length}건</div>
+                            </div>
+                            <div className="stat-card">
+                                <h3>확정 매출</h3>
+                                <div className="value" style={{color:'#43a047'}}>{formatMoney(completedRevenue)}</div>
+                                <div className="sub">{completedOrders.length}건 완료</div>
+                            </div>
+                            <div className="stat-card">
+                                <h3>총 주문</h3>
+                                <div className="value">{allOrders.length}</div>
+                                <div className="sub">누적</div>
+                            </div>
+                            <div className="stat-card">
+                                <h3>총 회원</h3>
+                                <div className="value">{members.length}</div>
+                                <div className="sub">가입자</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* 주문 상태별 현황 */}
+                    <div className="dashboard-section">
+                        <h3 className="dashboard-section-title">📦 주문 현황</h3>
+                        <div className="admin-stats" style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
+                            <div className="stat-card" style={{borderLeft: '4px solid #f9a825'}}>
+                                <h3>주문확인중</h3>
+                                <div className="value" style={{color:'#f9a825'}}>{pendingOrders.length}</div>
+                                <div className="sub">{formatMoney(pendingRevenue)}</div>
+                            </div>
+                            <div className="stat-card" style={{borderLeft: '4px solid #1976d2'}}>
+                                <h3>결제완료</h3>
+                                <div className="value" style={{color:'#1976d2'}}>{confirmedOrders.length}</div>
+                                <div className="sub">{formatMoney(confirmedRevenue)}</div>
+                            </div>
+                            <div className="stat-card" style={{borderLeft: '4px solid #7b1fa2'}}>
+                                <h3>배송중</h3>
+                                <div className="value" style={{color:'#7b1fa2'}}>{shippedOrders.length}</div>
+                                <div className="sub">{formatMoney(shippedRevenue)}</div>
+                            </div>
+                            <div className="stat-card" style={{borderLeft: '4px solid #43a047'}}>
+                                <h3>배송완료</h3>
+                                <div className="value" style={{color:'#43a047'}}>{completedOrders.length}</div>
+                                <div className="sub">{formatMoney(completedRevenue)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px'}}>
+                        {/* 재고 알림 */}
+                        <div className="dashboard-section">
+                            <h3 className="dashboard-section-title">⚠️ 재고 알림</h3>
+                            <div className="admin-table-wrap" style={{marginTop:'15px'}}>
+                                <table className="admin-table">
+                                    <thead><tr><th>상품</th><th>재고</th><th>상태</th></tr></thead>
+                                    <tbody>
+                                        {outOfStockProducts.slice(0,3).map(p => (
+                                            <tr key={p.id}><td>{p.brand} - {p.name}</td><td>0</td><td><span style={{color:'#e53935',fontWeight:'600'}}>품절</span></td></tr>
+                                        ))}
+                                        {lowStockProducts.slice(0,3).map(p => (
+                                            <tr key={p.id}><td>{p.brand} - {p.name}</td><td>{p.stock}</td><td><span style={{color:'#f57c00',fontWeight:'600'}}>부족</span></td></tr>
+                                        ))}
+                                        {outOfStockProducts.length === 0 && lowStockProducts.length === 0 && (
+                                            <tr><td colSpan="3" style={{textAlign:'center',color:'#888'}}>재고 부족 상품 없음</td></tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        {/* 최근 주문 */}
+                        <div className="dashboard-section">
+                            <h3 className="dashboard-section-title">🕐 최근 주문</h3>
+                            <div className="admin-table-wrap" style={{marginTop:'15px'}}>
+                                <table className="admin-table">
+                                    <thead><tr><th>고객</th><th>금액</th><th>상태</th></tr></thead>
+                                    <tbody>
+                                        {recentOrders.map(o => (
+                                            <tr key={o.id}>
+                                                <td>{o.userName}</td>
+                                                <td>₩{o.total?.toLocaleString()}</td>
+                                                <td><span className={`status-badge status-${o.status}`}>{{pending:'대기',confirmed:'결제',shipped:'배송',completed:'완료'}[o.status]}</span></td>
+                                            </tr>
+                                        ))}
+                                        {recentOrders.length === 0 && (
+                                            <tr><td colSpan="3" style={{textAlign:'center',color:'#888'}}>주문 없음</td></tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* 매출 요약 */}
+                    <div className="dashboard-section">
+                        <h3 className="dashboard-section-title">💰 매출 요약</h3>
+                        <div style={{background:'var(--gray-50)',padding:'20px',borderRadius:'8px',marginTop:'15px'}}>
+                            <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:'20px',textAlign:'center'}}>
+                                <div>
+                                    <div style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'5px'}}>총 주문 금액</div>
+                                    <div style={{fontSize:'24px',fontWeight:'700'}}>{formatMoney(totalRevenue)}</div>
+                                </div>
+                                <div>
+                                    <div style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'5px'}}>확정 매출 (배송완료)</div>
+                                    <div style={{fontSize:'24px',fontWeight:'700',color:'#43a047'}}>{formatMoney(completedRevenue)}</div>
+                                </div>
+                                <div>
+                                    <div style={{fontSize:'13px',color:'var(--gray-500)',marginBottom:'5px'}}>처리 대기 금액</div>
+                                    <div style={{fontSize:'24px',fontWeight:'700',color:'#f57c00'}}>{formatMoney(pendingRevenue + confirmedRevenue + shippedRevenue)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // 관리자 상품 관리 섹션
+        const AdminProductSection = ({ products, handleNew, handleEdit, deleteProduct, showModal, setShowModal, editingProduct, form, setForm, handleSubmit }) => {
+            const [filter, setFilter] = useState({ category: '', stock: '', search: '' });
+            
+            // 필터링된 상품 목록
+            const filteredProducts = products.filter(p => {
+                if (filter.category && p.category !== filter.category) return false;
+                if (filter.stock === 'out' && p.stock !== 0) return false;
+                if (filter.stock === 'low' && (p.stock === 0 || p.stock > 5)) return false;
+                if (filter.stock === 'in' && p.stock <= 5) return false;
+                if (filter.search) {
+                    const searchLower = filter.search.toLowerCase();
+                    if (!p.name?.toLowerCase().includes(searchLower) && !p.brand?.toLowerCase().includes(searchLower)) return false;
+                }
+                return true;
+            });
+            
+            const categoryNames = { clothing: '의류', shoes: '신발', bags: '가방' };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header">
+                        <h2>상품 목록 ({filteredProducts.length}/{products.length})</h2>
+                        <button className="btn-admin btn-admin-primary" onClick={handleNew}>+ 상품등록</button>
+                    </div>
+                    
+                    {/* 필터 영역 */}
+                    <div style={{padding:'15px 20px',background:'var(--gray-50)',borderBottom:'1px solid var(--gray-200)',display:'flex',gap:'15px',flexWrap:'wrap',alignItems:'center'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                            <label style={{fontSize:'13px',fontWeight:'500'}}>카테고리</label>
+                            <select style={{padding:'6px 10px',border:'1px solid var(--gray-300)',fontSize:'13px'}} value={filter.category} onChange={e => setFilter({...filter, category: e.target.value})}>
+                                <option value="">전체</option>
+                                <option value="clothing">의류</option>
+                                <option value="shoes">신발</option>
+                                <option value="bags">가방</option>
+                            </select>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                            <label style={{fontSize:'13px',fontWeight:'500'}}>재고</label>
+                            <select style={{padding:'6px 10px',border:'1px solid var(--gray-300)',fontSize:'13px'}} value={filter.stock} onChange={e => setFilter({...filter, stock: e.target.value})}>
+                                <option value="">전체</option>
+                                <option value="in">재고있음</option>
+                                <option value="low">재고부족 (5개이하)</option>
+                                <option value="out">품절</option>
+                            </select>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',gap:'8px',flex:1,maxWidth:'300px'}}>
+                            <label style={{fontSize:'13px',fontWeight:'500'}}>검색</label>
+                            <input type="text" placeholder="상품명, 브랜드" style={{padding:'6px 10px',border:'1px solid var(--gray-300)',fontSize:'13px',flex:1}} value={filter.search} onChange={e => setFilter({...filter, search: e.target.value})} />
+                        </div>
+                        <button style={{padding:'6px 12px',background:'var(--gray-200)',border:'none',fontSize:'12px',cursor:'pointer'}} onClick={() => setFilter({category:'',stock:'',search:''})}>초기화</button>
+                    </div>
+                    
+                    <table className="admin-table">
+                        <thead><tr><th>이미지</th><th>카테고리</th><th>브랜드</th><th>상품명</th><th>가격</th><th>재고</th><th>옵션</th><th>관리</th></tr></thead>
+                        <tbody>
+                            {filteredProducts.map(p => (
+                                <tr key={p.id}>
+                                    <td><img src={p.image} alt="" /></td>
+                                    <td><span style={{fontSize:'11px',background:'var(--gray-100)',padding:'3px 8px',borderRadius:'10px'}}>{categoryNames[p.category] || p.category}</span></td>
+                                    <td>{p.brand}</td>
+                                    <td style={{maxWidth:'150px'}}>{p.name}</td>
+                                    <td>{p.salePrice ? <><s style={{color:'#999',fontSize:'11px'}}>₩{Number(p.price).toLocaleString()}</s><br/><span style={{color:'#e53935',fontWeight:'600'}}>₩{Number(p.salePrice).toLocaleString()}</span></> : `₩${Number(p.price).toLocaleString()}`}</td>
+                                    <td>
+                                        <span style={{
+                                            fontWeight:'600',
+                                            color: p.stock === 0 ? '#e53935' : p.stock <= 5 ? '#f57c00' : '#43a047'
+                                        }}>
+                                            {p.stock === 0 ? '품절' : p.stock || 0}
+                                        </span>
+                                    </td>
+                                    <td style={{fontSize:'11px'}}>{p.colors||'-'}<br/>{p.sizes||'-'}</td>
+                                    <td>
+                                        <button className="btn-admin btn-admin-secondary" style={{marginRight:'5px'}} onClick={() => handleEdit(p)}>수정</button>
+                                        <button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteProduct(p.id); }}>삭제</button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {filteredProducts.length === 0 && (
+                                <tr><td colSpan="8" style={{textAlign:'center',padding:'40px',color:'var(--gray-500)'}}>조건에 맞는 상품이 없습니다</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                    
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header"><h2>{editingProduct ? '상품수정' : '상품등록'}</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                                <div className="form-group">
+                                    <label className="form-label">이미지 URL *</label>
+                                    <p style={{fontSize:'11px',color:'#888',marginBottom:'6px'}}>imgbb.com → 업로드 → 직접링크 (i.ibb.co로 시작) 복사</p>
+                                    <input className="form-input" value={form.image} onChange={e => setForm({...form, image: e.target.value})} />
+                                    {form.image && form.image.startsWith('http') && <img src={form.image} className="image-preview" style={{marginTop:'10px'}} />}
+                                </div>
+                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                                    <div className="form-group"><label className="form-label">브랜드 *</label><input className="form-input" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} /></div>
+                                    <div className="form-group"><label className="form-label">카테고리</label><select className="form-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}><option value="clothing">의류</option><option value="shoes">신발</option><option value="bags">가방</option></select></div>
+                                </div>
+                                <div className="form-group"><label className="form-label">상품명 *</label><input className="form-input" value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
+                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'10px'}}>
+                                    <div className="form-group"><label className="form-label">정가 *</label><input type="number" className="form-input" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
+                                    <div className="form-group"><label className="form-label">할인가</label><input type="number" className="form-input" value={form.salePrice} onChange={e => setForm({...form, salePrice: e.target.value})} /></div>
+                                    <div className="form-group"><label className="form-label">재고</label><input type="number" className="form-input" value={form.stock} onChange={e => setForm({...form, stock: e.target.value})} /></div>
+                                </div>
+                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+                                    <div className="form-group"><label className="form-label">색상 (쉼표구분)</label><input className="form-input" placeholder="블랙, 화이트" value={form.colors} onChange={e => setForm({...form, colors: e.target.value})} /></div>
+                                    <div className="form-group"><label className="form-label">사이즈 (쉼표구분)</label><input className="form-input" placeholder="S, M, L, XL" value={form.sizes} onChange={e => setForm({...form, sizes: e.target.value})} /></div>
+                                </div>
+                                <div className="form-group"><label className="form-label">배송정보</label><input className="form-input" placeholder="무료배송, 2-3일 소요" value={form.shippingInfo} onChange={e => setForm({...form, shippingInfo: e.target.value})} /></div>
+                                <div className="form-group"><label className="form-label">간단설명</label><textarea className="form-input" rows="2" value={form.shortDesc} onChange={e => setForm({...form, shortDesc: e.target.value})}></textarea></div>
+                                <div className="form-group"><label className="form-label">상세설명</label><textarea className="form-input" rows="5" value={form.fullDescription} onChange={e => setForm({...form, fullDescription: e.target.value})}></textarea></div>
+                                <button type="button" className="btn-submit" onClick={handleSubmit}>{editingProduct ? '수정' : '등록'}</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
         // 관리자 회원 관리 섹션
         const AdminMemberSection = ({ members, getGrade }) => {
             const [showModal, setShowModal] = useState(false);
@@ -4305,70 +4609,11 @@
                         }</h1></div>
                         <div className="admin-content">
                             {menu === 'dashboard' && (
-                                <div className="admin-stats">
-                                    <div className="stat-card"><h3>총 주문</h3><div className="value">{allOrders.length}</div></div>
-                                    <div className="stat-card"><h3>총 매출</h3><div className="value">₩{(totalRevenue/10000).toFixed(0)}만</div></div>
-                                    <div className="stat-card"><h3>대기 주문</h3><div className="value">{allOrders.filter(o=>o.status==='pending').length}</div></div>
-                                    <div className="stat-card"><h3>총 회원</h3><div className="value">{members.length}</div></div>
-                                </div>
+                                <AdminDashboard allOrders={allOrders} members={members} products={products} />
                             )}
                             
                             {menu === 'products' && (
-                                <div className="admin-table-wrap">
-                                    <div className="admin-table-header">
-                                        <h2>상품 목록 ({products.length})</h2>
-                                        <button className="btn-admin btn-admin-primary" onClick={handleNew}>+ 상품등록</button>
-                                    </div>
-                                    <table className="admin-table">
-                                        <thead><tr><th>이미지</th><th>브랜드</th><th>상품명</th><th>가격</th><th>옵션</th><th>관리</th></tr></thead>
-                                        <tbody>
-                                            {products.map(p => (
-                                                <tr key={p.id}>
-                                                    <td><img src={p.image} alt="" /></td>
-                                                    <td>{p.brand}</td>
-                                                    <td>{p.name}</td>
-                                                    <td>{p.salePrice ? <><s style={{color:'#999'}}>₩{Number(p.price).toLocaleString()}</s><br/>₩{Number(p.salePrice).toLocaleString()}</> : `₩${Number(p.price).toLocaleString()}`}</td>
-                                                    <td style={{fontSize:'11px'}}>{p.colors||'-'}<br/>{p.sizes||'-'}</td>
-                                                    <td>
-                                                        <button className="btn-admin btn-admin-secondary" style={{marginRight:'5px'}} onClick={() => handleEdit(p)}>수정</button>
-                                                        <button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteProduct(p.id); }}>삭제</button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    
-                                    {showModal && (
-                                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                                            <div className="modal" onClick={e => e.stopPropagation()}>
-                                                <div className="modal-header"><h2>{editingProduct ? '상품수정' : '상품등록'}</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
-                                                <div className="form-group">
-                                                    <label className="form-label">이미지 URL *</label>
-                                                    <p style={{fontSize:'11px',color:'#888',marginBottom:'6px'}}>imgbb.com → 업로드 → 직접링크 (i.ibb.co로 시작) 복사</p>
-                                                    <input className="form-input" value={form.image} onChange={e => setForm({...form, image: e.target.value})} />
-                                                    {form.image && form.image.startsWith('http') && <img src={form.image} className="image-preview" style={{marginTop:'10px'}} />}
-                                                </div>
-                                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-                                                    <div className="form-group"><label className="form-label">브랜드 *</label><input className="form-input" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} /></div>
-                                                    <div className="form-group"><label className="form-label">카테고리</label><select className="form-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}><option value="clothing">의류</option><option value="shoes">신발</option><option value="bags">가방</option></select></div>
-                                                </div>
-                                                <div className="form-group"><label className="form-label">상품명 *</label><input className="form-input" value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
-                                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-                                                    <div className="form-group"><label className="form-label">정가 *</label><input type="number" className="form-input" value={form.price} onChange={e => setForm({...form, price: e.target.value})} /></div>
-                                                    <div className="form-group"><label className="form-label">할인가</label><input type="number" className="form-input" value={form.salePrice} onChange={e => setForm({...form, salePrice: e.target.value})} /></div>
-                                                </div>
-                                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-                                                    <div className="form-group"><label className="form-label">색상 (쉼표구분)</label><input className="form-input" placeholder="블랙, 화이트" value={form.colors} onChange={e => setForm({...form, colors: e.target.value})} /></div>
-                                                    <div className="form-group"><label className="form-label">사이즈 (쉼표구분)</label><input className="form-input" placeholder="S, M, L, XL" value={form.sizes} onChange={e => setForm({...form, sizes: e.target.value})} /></div>
-                                                </div>
-                                                <div className="form-group"><label className="form-label">배송정보</label><input className="form-input" placeholder="무료배송, 2-3일 소요" value={form.shippingInfo} onChange={e => setForm({...form, shippingInfo: e.target.value})} /></div>
-                                                <div className="form-group"><label className="form-label">간단설명</label><textarea className="form-input" rows="2" value={form.shortDesc} onChange={e => setForm({...form, shortDesc: e.target.value})}></textarea></div>
-                                                <div className="form-group"><label className="form-label">상세설명</label><textarea className="form-input" rows="5" value={form.fullDescription} onChange={e => setForm({...form, fullDescription: e.target.value})}></textarea></div>
-                                                <button type="button" className="btn-submit" onClick={handleSubmit}>{editingProduct ? '수정' : '등록'}</button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <AdminProductSection products={products} handleNew={handleNew} handleEdit={handleEdit} deleteProduct={deleteProduct} showModal={showModal} setShowModal={setShowModal} editingProduct={editingProduct} form={form} setForm={setForm} handleSubmit={handleSubmit} />
                             )}
                             
                             {menu === 'orders' && (
