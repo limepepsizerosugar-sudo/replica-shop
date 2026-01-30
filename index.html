@@ -781,7 +781,7 @@
         
         .header-actions { 
             display: flex; 
-            gap: 24px; 
+            gap: 20px; 
             align-items: center;
             font-size: 13px;
             color: var(--gray-600);
@@ -793,17 +793,37 @@
             align-items: center;
             gap: 4px;
             transition: color 0.2s;
+            position: relative;
         }
         
         .header-action:hover { color: var(--black); }
         
+        .header-action.icon {
+            padding: 5px;
+        }
+        
+        .header-action.icon svg {
+            display: block;
+        }
+        
+        .header-action.icon:hover svg {
+            stroke-width: 2;
+        }
+        
         .header-action .count {
             background: var(--red);
             color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 10px;
+            font-size: 9px;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
             font-weight: 600;
+            position: absolute;
+            top: -2px;
+            right: -2px;
         }
         
         /* Main Visual Slider */
@@ -2648,9 +2668,17 @@
                         <div className="header-actions">
                             {user ? (
                                 <>
-                                    <span className="header-action" onClick={() => navigate('mypage')}>마이페이지</span>
-                                    <span className="header-action" onClick={() => navigate('wishlist')}>
-                                        관심 {wishlist.length > 0 && <span className="count">{wishlist.length}</span>}
+                                    <span className="header-action icon" onClick={() => navigate('mypage')} title="마이페이지">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                    </span>
+                                    <span className="header-action icon" onClick={() => navigate('wishlist')} title="관심상품">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                        </svg>
+                                        {wishlist.length > 0 && <span className="count">{wishlist.length}</span>}
                                     </span>
                                     {isAdmin && <span className="header-action" onClick={() => navigate('admin')}>관리자</span>}
                                 </>
@@ -2660,8 +2688,13 @@
                                     <span className="header-action" onClick={() => navigate('register')}>회원가입</span>
                                 </>
                             )}
-                            <span className="header-action" onClick={() => navigate('cart')}>
-                                장바구니 {cart.length > 0 && <span className="count">{cart.length}</span>}
+                            <span className="header-action icon" onClick={() => navigate('cart')} title="장바구니">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                                </svg>
+                                {cart.length > 0 && <span className="count">{cart.length}</span>}
                             </span>
                         </div>
                     </div>
@@ -3650,6 +3683,134 @@
             );
         };
         
+        // 관리자 회원 관리 섹션
+        const AdminMemberSection = ({ members, getGrade }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [editingMember, setEditingMember] = useState(null);
+            const [form, setForm] = useState({ points: 0, totalSpent: 0, manualGrade: '' });
+            
+            const handleEdit = (member) => {
+                setEditingMember(member);
+                setForm({
+                    points: member.points || 0,
+                    totalSpent: member.totalSpent || 0,
+                    manualGrade: member.manualGrade || ''
+                });
+                setShowModal(true);
+            };
+            
+            const handleSubmit = async () => {
+                try {
+                    await db.collection('users').doc(editingMember.id).update({
+                        points: Number(form.points),
+                        totalSpent: Number(form.totalSpent),
+                        manualGrade: form.manualGrade || null
+                    });
+                    setShowModal(false);
+                    alert('저장되었습니다');
+                } catch (e) {
+                    alert('저장 실패: ' + e.message);
+                }
+            };
+            
+            const handleAddPoints = async (amount, desc) => {
+                if (!amount) return;
+                const newPoints = Number(form.points) + Number(amount);
+                setForm({...form, points: newPoints});
+                
+                // 포인트 내역 추가
+                await db.collection('users').doc(editingMember.id).collection('pointsHistory').add({
+                    amount: Number(amount),
+                    type: amount > 0 ? 'earn' : 'use',
+                    desc: desc || '관리자 지급',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            };
+            
+            const getMemberGrade = (member) => {
+                if (member.manualGrade) {
+                    const grades = { vip: { name: 'VIP', class: 'vip' }, gold: { name: 'GOLD', class: 'gold' }, silver: { name: 'SILVER', class: 'silver' }, bronze: { name: 'BRONZE', class: 'bronze' } };
+                    return grades[member.manualGrade] || getGrade(member.totalSpent || 0);
+                }
+                return getGrade(member.totalSpent || 0);
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>회원 목록 ({members.length})</h2></div>
+                    <table className="admin-table">
+                        <thead><tr><th>이름</th><th>이메일</th><th>등급</th><th>적립금</th><th>총구매</th><th>가입일</th><th>관리</th></tr></thead>
+                        <tbody>
+                            {members.map(m => {
+                                const grade = getMemberGrade(m);
+                                return (
+                                    <tr key={m.id}>
+                                        <td>{m.name}</td>
+                                        <td>{m.email}</td>
+                                        <td>
+                                            <span className={`grade-badge grade-${grade.class}`}>{grade.name}</span>
+                                            {m.manualGrade && <small style={{display:'block',fontSize:'10px',color:'#f57c00',marginTop:'3px'}}>수동설정</small>}
+                                        </td>
+                                        <td>{(m.points||0).toLocaleString()}P</td>
+                                        <td>₩{(m.totalSpent||0).toLocaleString()}</td>
+                                        <td>{m.createdAt?.toDate?.().toLocaleDateString() || '-'}</td>
+                                        <td><button className="btn-admin btn-admin-secondary" onClick={() => handleEdit(m)}>수정</button></td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    
+                    {showModal && editingMember && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h2>회원 정보 수정</h2>
+                                    <span className="modal-close" onClick={() => setShowModal(false)}>×</span>
+                                </div>
+                                
+                                <div style={{background:'var(--gray-50)',padding:'15px',marginBottom:'20px',borderRadius:'4px'}}>
+                                    <p style={{fontWeight:'600',marginBottom:'5px'}}>{editingMember.name}</p>
+                                    <p style={{fontSize:'13px',color:'var(--gray-500)'}}>{editingMember.email}</p>
+                                </div>
+                                
+                                <div className="form-group">
+                                    <label className="form-label">등급 (수동 설정)</label>
+                                    <select className="form-input" value={form.manualGrade} onChange={e => setForm({...form, manualGrade: e.target.value})}>
+                                        <option value="">자동 (구매액 기준)</option>
+                                        <option value="vip">VIP (수동)</option>
+                                        <option value="gold">GOLD (수동)</option>
+                                        <option value="silver">SILVER (수동)</option>
+                                        <option value="bronze">BRONZE (수동)</option>
+                                    </select>
+                                    <p style={{fontSize:'11px',color:'var(--gray-500)',marginTop:'5px'}}>자동: BRONZE(~10만), SILVER(10만~), GOLD(50만~), VIP(100만~)</p>
+                                </div>
+                                
+                                <div className="form-group">
+                                    <label className="form-label">적립금</label>
+                                    <div style={{display:'flex',gap:'10px'}}>
+                                        <input type="number" className="form-input" value={form.points} onChange={e => setForm({...form, points: e.target.value})} />
+                                        <button className="btn-admin btn-admin-primary" style={{whiteSpace:'nowrap'}} onClick={() => { const amt = prompt('지급할 포인트 (차감은 음수)'); if(amt) handleAddPoints(amt, prompt('사유')); }}>포인트 지급</button>
+                                    </div>
+                                </div>
+                                
+                                <div className="form-group">
+                                    <label className="form-label">총 구매금액</label>
+                                    <input type="number" className="form-input" value={form.totalSpent} onChange={e => setForm({...form, totalSpent: e.target.value})} />
+                                    <p style={{fontSize:'11px',color:'var(--gray-500)',marginTop:'5px'}}>등급이 '자동'인 경우 이 금액으로 등급이 결정됩니다</p>
+                                </div>
+                                
+                                <div style={{display:'flex',gap:'10px',marginTop:'25px'}}>
+                                    <button className="btn-submit" style={{flex:1}} onClick={handleSubmit}>저장</button>
+                                    <button className="btn-submit" style={{flex:1,background:'var(--gray-300)',color:'var(--black)'}} onClick={() => setShowModal(false)}>취소</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
         // 관리자 쿠폰 관리 섹션
         const AdminCouponSection = ({ coupons, addCoupon, deleteCoupon }) => {
             const [showModal, setShowModal] = useState(false);
@@ -3966,24 +4127,7 @@
                             )}
                             
                             {menu === 'members' && (
-                                <div className="admin-table-wrap">
-                                    <div className="admin-table-header"><h2>회원 목록 ({members.length})</h2></div>
-                                    <table className="admin-table">
-                                        <thead><tr><th>이름</th><th>이메일</th><th>연락처</th><th>가입일</th><th>주문수</th><th>구매액</th></tr></thead>
-                                        <tbody>
-                                            {members.map(m => (
-                                                <tr key={m.id}>
-                                                    <td>{m.name}</td>
-                                                    <td>{m.email}</td>
-                                                    <td>{m.phone||'-'}</td>
-                                                    <td>{m.createdAt?.toDate ? m.createdAt.toDate().toLocaleDateString() : '-'}</td>
-                                                    <td>{m.orderCount||0}</td>
-                                                    <td>₩{(m.totalSpent||0).toLocaleString()}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <AdminMemberSection members={members} getGrade={getGrade} />
                             )}
                             
                             {menu === 'qna' && (
