@@ -1639,13 +1639,23 @@
             
             // Product CRUD
             const addProduct = async (data) => {
-                await db.collection('products').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                showToast('상품이 등록되었습니다!', 'success');
+                try {
+                    await db.collection('products').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    showToast('상품이 등록되었습니다!', 'success');
+                } catch (error) {
+                    console.error('addProduct error:', error);
+                    throw error;
+                }
             };
             
             const updateProduct = async (id, data) => {
-                await db.collection('products').doc(id).update(data);
-                showToast('상품이 수정되었습니다!', 'success');
+                try {
+                    await db.collection('products').doc(id).update(data);
+                    showToast('상품이 수정되었습니다!', 'success');
+                } catch (error) {
+                    console.error('updateProduct error:', error);
+                    throw error;
+                }
             };
             
             const deleteProduct = async (id) => {
@@ -2763,11 +2773,32 @@
             };
             
             const handleSubmit = async () => {
-                if (!form.brand || !form.name || !form.price || !form.image) { alert('필수 항목을 입력해주세요.'); return; }
-                const data = { ...form, price: Number(form.price), salePrice: form.salePrice ? Number(form.salePrice) : null, stock: Number(form.stock) || 0 };
-                if (editingProduct) await updateProduct(editingProduct.id, data);
-                else await addProduct(data);
-                setShowModal(false);
+                if (!form.brand || !form.name || !form.price || !form.image) { 
+                    alert('필수 항목을 입력해주세요.\n- 브랜드: ' + (form.brand ? '✓' : '✗') + '\n- 상품명: ' + (form.name ? '✓' : '✗') + '\n- 가격: ' + (form.price ? '✓' : '✗') + '\n- 이미지: ' + (form.image ? '✓' : '✗')); 
+                    return; 
+                }
+                try {
+                    const data = { 
+                        brand: form.brand,
+                        name: form.name,
+                        price: Number(form.price), 
+                        salePrice: form.salePrice ? Number(form.salePrice) : null, 
+                        category: form.category || 'clothing',
+                        stock: Number(form.stock) || 0,
+                        image: form.image,
+                        description: form.description || ''
+                    };
+                    if (editingProduct) {
+                        await updateProduct(editingProduct.id, data);
+                    } else {
+                        await addProduct(data);
+                    }
+                    setShowModal(false);
+                    setForm({ brand: '', name: '', price: '', salePrice: '', category: 'clothing', stock: '', image: '', description: '' });
+                } catch (error) {
+                    console.error('상품 등록 에러:', error);
+                    alert('상품 등록에 실패했습니다: ' + error.message);
+                }
             };
             
             const statusOptions = [
@@ -2851,11 +2882,11 @@
                                     </div>
                                     
                                     {showModal && (
-                                        <div className="modal-overlay" onClick={() => !uploading && setShowModal(false)}>
+                                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
                                             <div className="modal" onClick={e => e.stopPropagation()}>
                                                 <div className="modal-header">
                                                     <h2>{editingProduct ? '상품 수정' : '상품 등록'}</h2>
-                                                    <span className="modal-close" onClick={() => !uploading && setShowModal(false)}>×</span>
+                                                    <span className="modal-close" onClick={() => setShowModal(false)}>×</span>
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="form-label">상품 이미지 URL *</label>
@@ -2868,18 +2899,20 @@
                                                         value={form.image} 
                                                         onChange={e => setForm({...form, image: e.target.value})} 
                                                     />
-                                                    {form.image && (
+                                                    {form.image && form.image.startsWith('http') && (
                                                         <div style={{marginTop: '15px'}}>
                                                             <p style={{fontSize: '12px', color: '#666', marginBottom: '8px'}}>미리보기:</p>
-                                                            <div className="image-preview-container">
+                                                            <div style={{position: 'relative', display: 'inline-block'}}>
                                                                 <img 
                                                                     src={form.image} 
-                                                                    className="image-preview" 
-                                                                    onError={(e) => {e.target.style.display = 'none'}}
-                                                                    onLoad={(e) => {e.target.style.display = 'block'}}
-                                                                    style={{display: 'block'}}
+                                                                    alt="미리보기"
+                                                                    style={{maxWidth: '180px', maxHeight: '240px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #eee'}}
                                                                 />
-                                                                <button className="image-preview-remove" onClick={() => setForm({...form, image: ''})}>×</button>
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={() => setForm({...form, image: ''})}
+                                                                    style={{position: 'absolute', top: '-10px', right: '-10px', width: '26px', height: '26px', background: '#d32f2f', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer', fontSize: '14px'}}
+                                                                >×</button>
                                                             </div>
                                                         </div>
                                                     )}
@@ -2895,7 +2928,7 @@
                                                     <div className="form-group"><label className="form-label">재고</label><input type="number" className="form-input" value={form.stock} onChange={e => setForm({...form, stock: e.target.value})} /></div>
                                                 </div>
                                                 <div className="form-group"><label className="form-label">상품 설명</label><textarea className="form-input" rows="3" value={form.description} onChange={e => setForm({...form, description: e.target.value})}></textarea></div>
-                                                <button className="btn-submit" onClick={handleSubmit}>{editingProduct ? '수정하기' : '등록하기'}</button>
+                                                <button type="button" className="btn-submit" onClick={handleSubmit}>{editingProduct ? '수정하기' : '등록하기'}</button>
                                             </div>
                                         </div>
                                     )}
