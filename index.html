@@ -394,6 +394,227 @@
             margin-bottom: 15px;
         }
         
+        /* Search */
+        .header-search {
+            flex: 1;
+            max-width: 350px;
+            margin: 0 30px;
+            position: relative;
+        }
+        .header-search input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid var(--gray-300);
+            font-size: 13px;
+        }
+        .header-search input:focus {
+            outline: none;
+            border-color: var(--black);
+        }
+        .header-search button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .header-search { display: none; }
+        }
+        
+        /* Recent Viewed */
+        .recent-viewed {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-right: none;
+            z-index: 100;
+            width: 75px;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+        }
+        .recent-viewed-title {
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .recent-viewed-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .recent-viewed-item {
+            padding: 5px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+        }
+        .recent-viewed-item img {
+            width: 100%;
+            aspect-ratio: 1/1.2;
+            object-fit: cover;
+        }
+        
+        @media (max-width: 768px) {
+            .recent-viewed { display: none; }
+        }
+        
+        /* Notice */
+        .notice-list { }
+        .notice-item {
+            border-bottom: 1px solid var(--gray-200);
+            padding: 18px 0;
+            cursor: pointer;
+        }
+        .notice-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notice-badge {
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .notice-badge.important { background: var(--red); color: var(--white); }
+        .notice-badge.normal { background: var(--gray-200); color: var(--gray-600); }
+        .notice-title { font-size: 14px; font-weight: 500; }
+        .notice-date { font-size: 12px; color: var(--gray-400); margin-top: 8px; }
+        .notice-content {
+            padding: 15px;
+            background: var(--gray-50);
+            margin-top: 12px;
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        
+        /* Event */
+        .event-list {
+            display: grid;
+            gap: 30px;
+        }
+        .event-item {
+            cursor: pointer;
+        }
+        .event-image {
+            width: 100%;
+            aspect-ratio: 2/1;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .event-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .event-period {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+        
+        /* Grade Badge */
+        .grade-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        .grade-vip { background: linear-gradient(135deg, #ffd700, #ffb700); color: #000; }
+        .grade-gold { background: linear-gradient(135deg, #ffc107, #ff9800); color: #000; }
+        .grade-silver { background: linear-gradient(135deg, #bdbdbd, #9e9e9e); color: #fff; }
+        .grade-bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+        
+        /* Points */
+        .points-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: var(--white);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .points-label { font-size: 13px; opacity: 0.9; margin-bottom: 5px; }
+        .points-value { font-size: 32px; font-weight: 700; }
+        .points-history { border: 1px solid var(--gray-200); }
+        .points-history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 13px;
+        }
+        .points-history-item:last-child { border-bottom: none; }
+        .points-plus { color: #1976d2; font-weight: 600; }
+        .points-minus { color: var(--red); font-weight: 600; }
+        
+        /* Coupon */
+        .coupon-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .coupon-title { font-size: 14px; margin-bottom: 8px; opacity: 0.9; }
+        .coupon-value { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .coupon-desc { font-size: 12px; opacity: 0.8; }
+        .coupon-download {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: var(--white);
+            color: #667eea;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .coupon-card {
+            border: 2px dashed var(--gray-300);
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .coupon-card.used { opacity: 0.5; }
+        .coupon-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+        .coupon-info p { font-size: 13px; color: var(--gray-500); }
+        .coupon-amount { font-size: 22px; font-weight: 700; color: var(--red); }
+        
+        /* Stock */
+        .product-stock { font-size: 11px; color: #f57c00; margin-top: 4px; }
+        .detail-stock {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .detail-stock.low { background: #fff3e0; color: #f57c00; }
+        .detail-stock.out { background: #ffebee; color: var(--red); }
+        .detail-stock.in { background: #e8f5e9; color: #43a047; }
+        
+        /* Restock Alert */
+        .restock-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            font-size: 13px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .restock-btn:hover { background: var(--gray-200); }
+        .restock-btn.active { background: #1976d2; color: var(--white); border-color: #1976d2; }
+        
         /* Popup */
         .popup-overlay {
             position: fixed;
@@ -1787,6 +2008,23 @@
                 image: '',
                 link: 'new'
             });
+            const [searchKeyword, setSearchKeyword] = useState('');
+            const [coupons, setCoupons] = useState([]);
+            const [myCoupons, setMyCoupons] = useState([]);
+            const [userPoints, setUserPoints] = useState(0);
+            const [pointsHistory, setPointsHistory] = useState([]);
+            const [recentViewed, setRecentViewed] = useState([]);
+            const [notices, setNotices] = useState([]);
+            const [events, setEvents] = useState([]);
+            const [restockAlerts, setRestockAlerts] = useState([]);
+            
+            // 회원 등급 계산
+            const getGrade = (totalSpent) => {
+                if (totalSpent >= 1000000) return { name: 'VIP', class: 'vip', pointRate: 5 };
+                if (totalSpent >= 500000) return { name: 'GOLD', class: 'gold', pointRate: 3 };
+                if (totalSpent >= 100000) return { name: 'SILVER', class: 'silver', pointRate: 2 };
+                return { name: 'BRONZE', class: 'bronze', pointRate: 1 };
+            };
             
             // 기본 팝업 이미지 (SVG)
             const defaultPopupImage = `data:image/svg+xml,${encodeURIComponent(`
@@ -1831,17 +2069,22 @@
                                 uid: firebaseUser.uid,
                                 email: firebaseUser.email,
                                 name: userData?.name || firebaseUser.email.split('@')[0],
-                                phone: userData?.phone || ''
+                                phone: userData?.phone || '',
+                                totalSpent: userData?.totalSpent || 0
                             });
                             
                             setIsAdmin(firebaseUser.email === ADMIN_EMAIL);
                             setWishlist(userData?.wishlist || []);
+                            setUserPoints(userData?.points || 0);
                             
                             const savedCart = localStorage.getItem(`cart_${firebaseUser.uid}`);
                             if (savedCart) setCart(JSON.parse(savedCart));
+                            
+                            const savedRecent = localStorage.getItem(`recent_${firebaseUser.uid}`);
+                            if (savedRecent) setRecentViewed(JSON.parse(savedRecent));
                         } catch (error) {
                             console.error('Auth error:', error);
-                            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, name: firebaseUser.email.split('@')[0], phone: '' });
+                            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, name: firebaseUser.email.split('@')[0], phone: '', totalSpent: 0 });
                             setIsAdmin(firebaseUser.email === ADMIN_EMAIL);
                         }
                     } else {
@@ -1849,6 +2092,8 @@
                         setIsAdmin(false);
                         setCart([]);
                         setWishlist([]);
+                        setUserPoints(0);
+                        setRecentViewed([]);
                     }
                     setLoading(false);
                 });
@@ -1933,6 +2178,69 @@
                 return () => unsub();
             }, []);
             
+            // Coupons
+            useEffect(() => {
+                const unsub = db.collection('coupons').onSnapshot(snap => {
+                    setCoupons(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // My Coupons
+            useEffect(() => {
+                if (!user) { setMyCoupons([]); return; }
+                const unsub = db.collection('users').doc(user.uid).collection('coupons').onSnapshot(snap => {
+                    setMyCoupons(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Points History
+            useEffect(() => {
+                if (!user) { setPointsHistory([]); return; }
+                const unsub = db.collection('users').doc(user.uid).collection('pointsHistory').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+                    setPointsHistory(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Notices
+            useEffect(() => {
+                const unsub = db.collection('notices').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                    setNotices(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // Events
+            useEffect(() => {
+                const unsub = db.collection('events').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                    setEvents(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                });
+                return () => unsub();
+            }, []);
+            
+            // Restock Alerts
+            useEffect(() => {
+                if (!user) { setRestockAlerts([]); return; }
+                const unsub = db.collection('restockAlerts').where('userId', '==', user.uid).onSnapshot(snap => {
+                    setRestockAlerts(snap.docs.map(d => d.data().productId));
+                });
+                return () => unsub();
+            }, [user]);
+            
+            // Recent Viewed (localStorage)
+            useEffect(() => {
+                if (user) {
+                    const saved = localStorage.getItem(`recent_${user.uid}`);
+                    if (saved) setRecentViewed(JSON.parse(saved));
+                }
+            }, [user]);
+            
+            useEffect(() => {
+                if (user && recentViewed.length > 0) localStorage.setItem(`recent_${user.uid}`, JSON.stringify(recentViewed));
+            }, [recentViewed, user]);
+            
             useEffect(() => {
                 if (user) localStorage.setItem(`cart_${user.uid}`, JSON.stringify(cart));
             }, [cart, user]);
@@ -1942,9 +2250,15 @@
                 await db.collection('users').doc(firebaseUser.uid).set({
                     email, name, phone,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    orderCount: 0, totalSpent: 0, wishlist: []
+                    orderCount: 0, totalSpent: 0, points: 1000, wishlist: []
                 });
-                showToast('회원가입이 완료되었습니다', 'success');
+                // 가입 적립금 내역
+                await db.collection('users').doc(firebaseUser.uid).collection('pointsHistory').add({
+                    amount: 1000, type: 'earn', desc: '회원가입 축하 적립금',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                setUserPoints(1000);
+                showToast('회원가입 완료! 1,000P 적립!', 'success');
             };
             
             const login = async (email, password) => {
@@ -1987,7 +2301,10 @@
             
             const navigate = (page, product = null) => {
                 setCurrentPage(page);
-                if (product) setSelectedProduct(product);
+                if (product) {
+                    setSelectedProduct(product);
+                    addRecentViewed(product);
+                }
                 window.scrollTo(0, 0);
             };
             
@@ -2098,6 +2415,77 @@
                 showToast('팝업이 저장되었습니다', 'success');
             };
             
+            // Coupon 함수
+            const addCoupon = async (data) => {
+                await db.collection('coupons').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('쿠폰 등록 완료', 'success');
+            };
+            const deleteCoupon = async (id) => {
+                await db.collection('coupons').doc(id).delete();
+                showToast('삭제 완료', 'success');
+            };
+            const downloadCoupon = async (coupon) => {
+                if (!user) { showToast('로그인이 필요합니다', 'error'); return; }
+                const exists = myCoupons.find(c => c.couponId === coupon.id);
+                if (exists) { showToast('이미 다운받은 쿠폰입니다', 'error'); return; }
+                await db.collection('users').doc(user.uid).collection('coupons').add({
+                    couponId: coupon.id, name: coupon.name, discount: coupon.discount, minOrder: coupon.minOrder,
+                    used: false, downloadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('쿠폰 다운로드 완료!', 'success');
+            };
+            
+            // Notice 함수
+            const addNotice = async (data) => {
+                await db.collection('notices').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('공지 등록 완료', 'success');
+            };
+            const deleteNotice = async (id) => {
+                await db.collection('notices').doc(id).delete();
+                showToast('삭제 완료', 'success');
+            };
+            
+            // Event 함수
+            const addEvent = async (data) => {
+                await db.collection('events').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                showToast('이벤트 등록 완료', 'success');
+            };
+            const deleteEvent = async (id) => {
+                await db.collection('events').doc(id).delete();
+                showToast('삭제 완료', 'success');
+            };
+            
+            // Restock Alert 함수
+            const toggleRestockAlert = async (productId) => {
+                if (!user) { showToast('로그인이 필요합니다', 'error'); return; }
+                const hasAlert = restockAlerts.includes(productId);
+                if (hasAlert) {
+                    const snap = await db.collection('restockAlerts').where('userId', '==', user.uid).where('productId', '==', productId).get();
+                    snap.forEach(d => d.ref.delete());
+                    setRestockAlerts(prev => prev.filter(id => id !== productId));
+                    showToast('재입고 알림 해제', 'success');
+                } else {
+                    await db.collection('restockAlerts').add({ userId: user.uid, productId, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    setRestockAlerts(prev => [...prev, productId]);
+                    showToast('재입고 알림 신청 완료!', 'success');
+                }
+            };
+            
+            // Recent Viewed 함수
+            const addRecentViewed = (product) => {
+                setRecentViewed(prev => {
+                    const filtered = prev.filter(p => p.id !== product.id);
+                    return [product, ...filtered].slice(0, 10);
+                });
+            };
+            
+            // 검색 함수
+            const searchProducts = (keyword) => {
+                if (!keyword) return products;
+                const kw = keyword.toLowerCase();
+                return products.filter(p => p.name?.toLowerCase().includes(kw) || p.brand?.toLowerCase().includes(kw));
+            };
+            
             const getProductsByCategory = (category) => {
                 if (category === 'new') return products.slice(0, 20);
                 if (category === 'brand') return products;
@@ -2117,7 +2505,15 @@
                     reviews, addReview, deleteReview,
                     faqs, addFaq, updateFaq, deleteFaq,
                     siteInfo, updateSiteInfo,
-                    popup, updatePopup, defaultPopupImage
+                    popup, updatePopup, defaultPopupImage,
+                    searchKeyword, setSearchKeyword, searchProducts,
+                    coupons, addCoupon, deleteCoupon, myCoupons, downloadCoupon,
+                    userPoints, setUserPoints, pointsHistory,
+                    recentViewed, addRecentViewed,
+                    notices, addNotice, deleteNotice,
+                    events, addEvent, deleteEvent,
+                    restockAlerts, toggleRestockAlert,
+                    getGrade
                 }}>
                     {children}
                 </AppContext.Provider>
@@ -2217,7 +2613,8 @@
         );
         
         const Header = () => {
-            const { user, cart, wishlist, navigate, currentPage, isAdmin } = useApp();
+            const { user, cart, wishlist, navigate, currentPage, isAdmin, setSearchKeyword } = useApp();
+            const [localSearch, setLocalSearch] = useState('');
             
             const navItems = [
                 { id: 'new', label: '신상품' },
@@ -2227,11 +2624,22 @@
                 { id: 'bags', label: '가방' },
             ];
             
+            const handleSearch = () => {
+                if (localSearch.trim()) {
+                    setSearchKeyword(localSearch.trim());
+                    navigate('search');
+                }
+            };
+            
             return (
                 <header className="header">
-                    <div className="header-top">전 상품 무료배송 | 신규가입 10% 할인</div>
+                    <div className="header-top">전 상품 무료배송 | 신규가입 1,000P 적립</div>
                     <div className="header-main">
                         <div className="logo" onClick={() => navigate('home')}>명동사</div>
+                        <div className="header-search">
+                            <input type="text" placeholder="검색어를 입력하세요" value={localSearch} onChange={e => setLocalSearch(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSearch()} />
+                            <button onClick={handleSearch}>🔍</button>
+                        </div>
                         <nav className="nav-menu">
                             {navItems.map(item => (
                                 <span key={item.id} className={`nav-link ${currentPage === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>{item.label}</span>
@@ -2242,7 +2650,7 @@
                                 <>
                                     <span className="header-action" onClick={() => navigate('mypage')}>마이페이지</span>
                                     <span className="header-action" onClick={() => navigate('wishlist')}>
-                                        관심상품 {wishlist.length > 0 && <span className="count">{wishlist.length}</span>}
+                                        관심 {wishlist.length > 0 && <span className="count">{wishlist.length}</span>}
                                     </span>
                                     {isAdmin && <span className="header-action" onClick={() => navigate('admin')}>관리자</span>}
                                 </>
@@ -2282,11 +2690,11 @@
                         <div>
                             <h4 className="footer-title">CS CENTER</h4>
                             <ul className="footer-links">
+                                <li onClick={() => navigate('notice')}>공지사항</li>
                                 <li onClick={() => navigate('qna')}>Q&A</li>
                                 <li onClick={() => navigate('review')}>상품후기</li>
-                                <li onClick={() => navigate('shipping')}>배송안내</li>
-                                <li onClick={() => navigate('exchange')}>교환/반품</li>
                                 <li onClick={() => navigate('faq')}>자주묻는질문</li>
+                                <li onClick={() => navigate('event')}>이벤트</li>
                             </ul>
                         </div>
                         <div>
@@ -3029,6 +3437,100 @@
             );
         };
         
+        // 검색 페이지
+        const SearchPage = () => {
+            const { searchKeyword, searchProducts } = useApp();
+            const results = searchProducts(searchKeyword);
+            return (
+                <>
+                    <div className="list-header">
+                        <div className="list-breadcrumb">HOME &gt; 검색</div>
+                        <h1 className="list-title">"{searchKeyword}" 검색 결과</h1>
+                        <div className="list-filter"><div className="list-count">총 <strong>{results.length}</strong>개</div></div>
+                    </div>
+                    <section className="section">
+                        {results.length > 0 ? (
+                            <div className="product-grid list-view">{results.map(p => <ProductCard key={p.id} product={p} />)}</div>
+                        ) : (
+                            <div className="empty-state"><h3>검색 결과가 없습니다</h3><p>다른 검색어로 다시 시도해보세요</p></div>
+                        )}
+                    </section>
+                </>
+            );
+        };
+        
+        // 공지사항 페이지
+        const NoticePage = () => {
+            const { notices } = useApp();
+            const [openId, setOpenId] = useState(null);
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>공지사항</h1></div>
+                    <div className="cs-content">
+                        {notices.length === 0 ? (
+                            <div className="empty-state"><h3>공지사항이 없습니다</h3></div>
+                        ) : (
+                            <div className="notice-list">
+                                {notices.map(n => (
+                                    <div key={n.id} className="notice-item" onClick={() => setOpenId(openId === n.id ? null : n.id)}>
+                                        <div className="notice-header">
+                                            <span className={`notice-badge ${n.important ? 'important' : 'normal'}`}>{n.important ? '중요' : '일반'}</span>
+                                            <span className="notice-title">{n.title}</span>
+                                        </div>
+                                        <div className="notice-date">{n.createdAt?.toDate?.().toLocaleDateString() || '-'}</div>
+                                        {openId === n.id && <div className="notice-content">{n.content}</div>}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        
+        // 이벤트 페이지
+        const EventPage = () => {
+            const { events, navigate } = useApp();
+            return (
+                <div className="cs-page">
+                    <div className="cs-header"><h1>이벤트 / 기획전</h1></div>
+                    <div className="cs-content">
+                        {events.length === 0 ? (
+                            <div className="empty-state"><h3>진행 중인 이벤트가 없습니다</h3></div>
+                        ) : (
+                            <div className="event-list">
+                                {events.map(e => (
+                                    <div key={e.id} className="event-item" onClick={() => e.link && navigate(e.link)}>
+                                        {e.image && <img src={e.image} alt="" className="event-image" />}
+                                        <div className="event-title">{e.title}</div>
+                                        <div className="event-period">{e.period}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        
+        // 최근 본 상품
+        const RecentViewed = () => {
+            const { recentViewed, navigate } = useApp();
+            if (recentViewed.length === 0) return null;
+            return (
+                <div className="recent-viewed">
+                    <div className="recent-viewed-title">최근본상품</div>
+                    <div className="recent-viewed-list">
+                        {recentViewed.slice(0, 5).map(p => (
+                            <div key={p.id} className="recent-viewed-item" onClick={() => navigate('detail', p)}>
+                                <img src={p.image} alt="" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+        
         // FAQ 페이지
         const FaqPage = () => {
             const { faqs } = useApp();
@@ -3148,6 +3650,103 @@
             );
         };
         
+        // 관리자 쿠폰 관리 섹션
+        const AdminCouponSection = ({ coupons, addCoupon, deleteCoupon }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ name: '', discount: '', minOrder: '' });
+            
+            const handleSubmit = async () => {
+                if (!form.name || !form.discount) { alert('쿠폰명과 할인금액을 입력해주세요'); return; }
+                await addCoupon({ name: form.name, discount: Number(form.discount), minOrder: Number(form.minOrder) || 0 });
+                setShowModal(false);
+                setForm({ name: '', discount: '', minOrder: '' });
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>쿠폰 목록 ({coupons.length})</h2><button className="btn-admin btn-admin-primary" onClick={() => setShowModal(true)}>+ 쿠폰 등록</button></div>
+                    <table className="admin-table">
+                        <thead><tr><th>쿠폰명</th><th>할인금액</th><th>최소주문</th><th>관리</th></tr></thead>
+                        <tbody>{coupons.map(c => (
+                            <tr key={c.id}><td>{c.name}</td><td>₩{c.discount?.toLocaleString()}</td><td>₩{c.minOrder?.toLocaleString()}</td><td><button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteCoupon(c.id); }}>삭제</button></td></tr>
+                        ))}</tbody>
+                    </table>
+                    {showModal && <div className="modal-overlay" onClick={() => setShowModal(false)}><div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header"><h2>쿠폰 등록</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                        <div className="form-group"><label className="form-label">쿠폰명 *</label><input className="form-input" value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
+                        <div className="form-group"><label className="form-label">할인금액 *</label><input type="number" className="form-input" value={form.discount} onChange={e => setForm({...form, discount: e.target.value})} /></div>
+                        <div className="form-group"><label className="form-label">최소주문금액</label><input type="number" className="form-input" value={form.minOrder} onChange={e => setForm({...form, minOrder: e.target.value})} /></div>
+                        <button className="btn-submit" onClick={handleSubmit}>등록</button>
+                    </div></div>}
+                </div>
+            );
+        };
+        
+        // 관리자 공지사항 관리 섹션
+        const AdminNoticeSection = ({ notices, addNotice, deleteNotice }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ title: '', content: '', important: false });
+            
+            const handleSubmit = async () => {
+                if (!form.title || !form.content) { alert('제목과 내용을 입력해주세요'); return; }
+                await addNotice(form);
+                setShowModal(false);
+                setForm({ title: '', content: '', important: false });
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>공지사항 ({notices.length})</h2><button className="btn-admin btn-admin-primary" onClick={() => setShowModal(true)}>+ 공지 등록</button></div>
+                    <table className="admin-table">
+                        <thead><tr><th>구분</th><th>제목</th><th>날짜</th><th>관리</th></tr></thead>
+                        <tbody>{notices.map(n => (
+                            <tr key={n.id}><td><span className={`notice-badge ${n.important ? 'important' : 'normal'}`}>{n.important ? '중요' : '일반'}</span></td><td>{n.title}</td><td>{n.createdAt?.toDate?.().toLocaleDateString() || '-'}</td><td><button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteNotice(n.id); }}>삭제</button></td></tr>
+                        ))}</tbody>
+                    </table>
+                    {showModal && <div className="modal-overlay" onClick={() => setShowModal(false)}><div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header"><h2>공지 등록</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                        <div className="form-group"><label style={{display:'flex',alignItems:'center',gap:'8px'}}><input type="checkbox" checked={form.important} onChange={e => setForm({...form, important: e.target.checked})} /> 중요 공지</label></div>
+                        <div className="form-group"><label className="form-label">제목 *</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
+                        <div className="form-group"><label className="form-label">내용 *</label><textarea className="form-input" rows="6" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea></div>
+                        <button className="btn-submit" onClick={handleSubmit}>등록</button>
+                    </div></div>}
+                </div>
+            );
+        };
+        
+        // 관리자 이벤트 관리 섹션
+        const AdminEventSection = ({ events, addEvent, deleteEvent }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [form, setForm] = useState({ title: '', period: '', image: '', link: '' });
+            
+            const handleSubmit = async () => {
+                if (!form.title) { alert('제목을 입력해주세요'); return; }
+                await addEvent(form);
+                setShowModal(false);
+                setForm({ title: '', period: '', image: '', link: '' });
+            };
+            
+            return (
+                <div className="admin-table-wrap">
+                    <div className="admin-table-header"><h2>이벤트 ({events.length})</h2><button className="btn-admin btn-admin-primary" onClick={() => setShowModal(true)}>+ 이벤트 등록</button></div>
+                    <table className="admin-table">
+                        <thead><tr><th>이미지</th><th>제목</th><th>기간</th><th>관리</th></tr></thead>
+                        <tbody>{events.map(e => (
+                            <tr key={e.id}><td>{e.image && <img src={e.image} alt="" />}</td><td>{e.title}</td><td>{e.period}</td><td><button className="btn-admin btn-admin-danger" onClick={() => { if(window.confirm('삭제?')) deleteEvent(e.id); }}>삭제</button></td></tr>
+                        ))}</tbody>
+                    </table>
+                    {showModal && <div className="modal-overlay" onClick={() => setShowModal(false)}><div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header"><h2>이벤트 등록</h2><span className="modal-close" onClick={() => setShowModal(false)}>×</span></div>
+                        <div className="form-group"><label className="form-label">이미지 URL</label><input className="form-input" value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="https://i.ibb.co/..." /></div>
+                        <div className="form-group"><label className="form-label">제목 *</label><input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} /></div>
+                        <div className="form-group"><label className="form-label">기간</label><input className="form-input" value={form.period} onChange={e => setForm({...form, period: e.target.value})} placeholder="2025.01.01 ~ 2025.01.31" /></div>
+                        <div className="form-group"><label className="form-label">링크 (페이지명)</label><input className="form-input" value={form.link} onChange={e => setForm({...form, link: e.target.value})} placeholder="new" /></div>
+                        <button className="btn-submit" onClick={handleSubmit}>등록</button>
+                    </div></div>}
+                </div>
+            );
+        };
+        
         // 관리자 팝업 관리 섹션
         const AdminPopupSection = ({ popup, updatePopup }) => {
             const [active, setActive] = useState(popup?.active || false);
@@ -3210,7 +3809,7 @@
         };
         
         const AdminPage = () => {
-            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo, popup, updatePopup } = useApp();
+            const { navigate, logout, products, allOrders, members, addProduct, updateProduct, deleteProduct, updateOrderStatus, qnas, answerQna, deleteQna, faqs, addFaq, updateFaq, deleteFaq, siteInfo, updateSiteInfo, popup, updatePopup, coupons, addCoupon, deleteCoupon, notices, addNotice, deleteNotice, events, addEvent, deleteEvent, getGrade } = useApp();
             const [menu, setMenu] = useState('dashboard');
             const [showModal, setShowModal] = useState(false);
             const [editingProduct, setEditingProduct] = useState(null);
@@ -3253,6 +3852,9 @@
                             <li className={`admin-nav-item ${menu === 'members' ? 'active' : ''}`} onClick={() => setMenu('members')}>회원관리</li>
                             <li className={`admin-nav-item ${menu === 'qna' ? 'active' : ''}`} onClick={() => setMenu('qna')}>Q&A 관리</li>
                             <li className={`admin-nav-item ${menu === 'faq' ? 'active' : ''}`} onClick={() => setMenu('faq')}>FAQ 관리</li>
+                            <li className={`admin-nav-item ${menu === 'coupon' ? 'active' : ''}`} onClick={() => setMenu('coupon')}>쿠폰 관리</li>
+                            <li className={`admin-nav-item ${menu === 'notice' ? 'active' : ''}`} onClick={() => setMenu('notice')}>공지사항</li>
+                            <li className={`admin-nav-item ${menu === 'event' ? 'active' : ''}`} onClick={() => setMenu('event')}>이벤트</li>
                             <li className={`admin-nav-item ${menu === 'popup' ? 'active' : ''}`} onClick={() => setMenu('popup')}>팝업 관리</li>
                             <li className={`admin-nav-item ${menu === 'siteinfo' ? 'active' : ''}`} onClick={() => setMenu('siteinfo')}>안내페이지</li>
                             <li className="admin-nav-item" onClick={() => navigate('home')}>쇼핑몰</li>
@@ -3267,6 +3869,9 @@
                             menu === 'members' ? '회원관리' :
                             menu === 'qna' ? 'Q&A 관리' :
                             menu === 'faq' ? 'FAQ 관리' :
+                            menu === 'coupon' ? '쿠폰 관리' :
+                            menu === 'notice' ? '공지사항 관리' :
+                            menu === 'event' ? '이벤트 관리' :
                             menu === 'popup' ? '팝업 관리' :
                             menu === 'siteinfo' ? '안내페이지 관리' : ''
                         }</h1></div>
@@ -3415,6 +4020,18 @@
                                 <AdminFaqSection faqs={faqs} addFaq={addFaq} updateFaq={updateFaq} deleteFaq={deleteFaq} />
                             )}
                             
+                            {menu === 'coupon' && (
+                                <AdminCouponSection coupons={coupons} addCoupon={addCoupon} deleteCoupon={deleteCoupon} />
+                            )}
+                            
+                            {menu === 'notice' && (
+                                <AdminNoticeSection notices={notices} addNotice={addNotice} deleteNotice={deleteNotice} />
+                            )}
+                            
+                            {menu === 'event' && (
+                                <AdminEventSection events={events} addEvent={addEvent} deleteEvent={deleteEvent} />
+                            )}
+                            
                             {menu === 'popup' && (
                                 <AdminPopupSection popup={popup} updatePopup={updatePopup} />
                             )}
@@ -3447,14 +4064,17 @@
                 review: <ReviewPage />,
                 shipping: <ShippingPage />,
                 exchange: <ExchangePage />,
-                faq: <FaqPage />
+                faq: <FaqPage />,
+                search: <SearchPage />,
+                notice: <NoticePage />,
+                event: <EventPage />
             };
             
             let content;
             if (categoryPages.includes(currentPage)) content = <CategoryPage category={currentPage} />;
             else content = pages[currentPage] || <HomePage />;
             
-            return (<><Header /><main>{content}</main><Footer /></>);
+            return (<><Header /><main>{content}</main><Footer /><RecentViewed /></>);
         };
         
         const App = () => (<AppProvider><Router /><Toast /><FloatingButtons /><PopupModal /></AppProvider>);
