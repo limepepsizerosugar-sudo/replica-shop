@@ -1302,6 +1302,26 @@
             .footer-content { grid-template-columns: 1fr; gap: 25px; }
             .admin-sidebar { display: none; }
             .admin-main { margin-left: 0; }
+            
+            /* 상세페이지 탭 모바일 */
+            .detail-desc-tabs { 
+                display: flex; 
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .detail-desc-tab { 
+                padding: 12px 15px; 
+                font-size: 12px; 
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .detail-wrap { padding: 20px; }
+            .detail-container { gap: 30px; }
+            .detail-name { font-size: 18px; }
+            .detail-sale-price { font-size: 22px; }
+            .detail-desc-section { padding: 0 20px; }
+            .detail-actions { flex-wrap: wrap; }
+            .btn-cart, .btn-buy { padding: 14px 10px; font-size: 13px; }
         }
     </style>
 </head>
